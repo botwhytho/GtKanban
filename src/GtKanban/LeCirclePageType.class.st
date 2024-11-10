@@ -10,6 +10,18 @@ LeCirclePageType class >> initialize [
 	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter
 ]
 
+{ #category : #accesing }
+LeCirclePageType class >> leJsonV3Name [
+
+	^ 'circlePage'
+]
+
+{ #category : #accesing }
+LeCirclePageType class >> leJsonV4Name [
+
+	^ 'circlePage'
+]
+
 { #category : #'as yet unclassified' }
 LeCirclePageType >> customPhlowTool [
 	^ GtPhlowValuableTool new
@@ -25,18 +37,6 @@ LeCirclePageType >> databaseKey [
 	"Answer the attribute used to index a page of the receiver's type in the database."
 
 	^ self title
-]
-
-{ #category : #accesing }
-LeCirclePageType >> leJsonV3Name [
-
-	^ 'circlePage'
-]
-
-{ #category : #accesing }
-LeCirclePageType >> leJsonV4Name [
-
-	^ 'circlePage'
 ]
 
 { #category : #accesing }
