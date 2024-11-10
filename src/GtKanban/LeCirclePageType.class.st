@@ -7,7 +7,12 @@ Class {
 { #category : #initialization }
 LeCirclePageType class >> initialize [
 	super initialize.
-	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter
+	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter.
+	LeDatabasesRegistry defaultLogicalDatabase databases
+		do: [ :aDatabase | 
+			(aDatabase instVarNamed: #pagesByType)
+				at: LeCirclePageType
+				ifAbsentPut: [ GtStringContentDictionary new ] ]
 ]
 
 { #category : #accesing }
