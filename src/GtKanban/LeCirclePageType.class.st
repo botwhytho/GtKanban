@@ -4,6 +4,12 @@ Class {
 	#category : #GtKanban
 }
 
+{ #category : #initialization }
+LeCirclePageType class >> initialize [
+	super initialize.
+	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter
+]
+
 { #category : #'as yet unclassified' }
 LeCirclePageType >> customPhlowTool [
 	^ GtPhlowValuableTool new
@@ -19,6 +25,39 @@ LeCirclePageType >> databaseKey [
 	"Answer the attribute used to index a page of the receiver's type in the database."
 
 	^ self title
+]
+
+{ #category : #accesing }
+LeCirclePageType >> leJsonV3Name [
+
+	^ 'circlePage'
+]
+
+{ #category : #accesing }
+LeCirclePageType >> leJsonV4Name [
+
+	^ 'circlePage'
+]
+
+{ #category : #accesing }
+LeCirclePageType >> remoteLinkId [
+	"Answer the string to be used to identify the page in a remote link annotation ({{gtPage:...}})"
+	<return: #String>
+
+	^ self title
+]
+
+{ #category : #'api - testing' }
+LeCirclePageType >> saveEmptyPages [
+	"Flag whether to save empty pages or not.
+	Empty named pages are saved."
+
+	^ true
+]
+
+{ #category : #accesing }
+LeCirclePageType >> shouldAppearInIndexOrDailyNotes [
+	^ true
 ]
 
 { #category : #'as yet unclassified' }
