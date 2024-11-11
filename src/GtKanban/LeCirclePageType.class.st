@@ -1,6 +1,9 @@
 Class {
 	#name : #LeCirclePageType,
 	#superclass : #LePageType,
+	#instVars : [
+		'title'
+	],
 	#category : #GtKanban
 }
 
@@ -80,7 +83,12 @@ LeCirclePageType >> shouldAppearInIndexOrDailyNotes [
 	^ true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 LeCirclePageType >> title [
 ^ 'Test Circle Page3'
+]
+
+{ #category : #acccessing }
+LeCirclePageType >> title: aString [
+	title := aString
 ]
