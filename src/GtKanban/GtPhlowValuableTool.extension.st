@@ -9,3 +9,10 @@ GtPhlowValuableTool >> icon [
 GtPhlowValuableTool >> icon: anIcon [
 	icon := anIcon
 ]
+
+{ #category : #'*GtKanban' }
+GtPhlowValuableTool >> tabLook [
+	^ icon
+		ifNil: [ BrGlamorousTabSwitcherWithLabelAptitude ]
+		ifNotNil: [ BrGlamorousTabSwitcherWithIconAptitude ]
+]

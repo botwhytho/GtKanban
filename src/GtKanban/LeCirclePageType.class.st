@@ -13,6 +13,7 @@ LeCirclePageType class >> initialize [
 			(aDatabase instVarNamed: #pagesByType)
 				at: LeCirclePageType
 				ifAbsentPut: [ GtStringContentDictionary new ] ]
+	"Need to create an `icon` slot on `GtPhlowValuableTool` if it doesn't exist."
 ]
 
 { #category : #accesing }
