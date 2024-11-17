@@ -16,24 +16,10 @@ LeCirclePageType class >> initialize [
 	"Need to create an `icon` slot on `GtPhlowValuableTool` if it doesn't exist."
 ]
 
-{ #category : #accessing }
-LeCirclePageType class >> leJsonV3AttributeMapping [
-	^ super leJsonV3AttributeMapping
-		add: #title -> #title;
-		yourself
-]
-
 { #category : #accesing }
 LeCirclePageType class >> leJsonV3Name [
 
 	^ 'circlePage'
-]
-
-{ #category : #accessing }
-LeCirclePageType class >> leJsonV4AttributeMapping [
-	^ super leJsonV4AttributeMapping
-		add: #title -> #title;
-		yourself
 ]
 
 { #category : #accesing }
