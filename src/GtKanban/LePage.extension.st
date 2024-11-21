@@ -9,14 +9,44 @@ LePage >> asPhlowTool [
 { #category : #'*GtKanban' }
 LePage >> gtKanbanFor: aView [
 	<gtView>
+	| listElements |
 	^ aView explicit
 		title: 'Kanban';
 		priority: 100;
-		stencil: [ | lists cards | 
-		"BrFrame new
-				matchParent;
-				addChild: BlBasicExamples new circle"
-		lists := self children select: [:each| (each parent isKindOf: LePage) and: [ each isTextSnippet ]].
-		cards := lists flatCollect: [:each| each children].
-		BlTextElement text: ('Board has ' , lists size asString , ' lists with ' , cards size asString, ' cards total') asRopedText] 
+		stencil: [ | board columnBlock lists handler |
+			board := BrFrame new matchParent.
+
+			columnBlock := [ BlElement new
+					border: (BlBorder paint: Color lightGray lighter);
+					background: Color yellow muchLighter muchLighter lighter;
+					layout: BlFlowLayout new;
+					margin: (BlInsets all: 2);
+					padding: (BlInsets all: 2);
+					constraintsDo: [ :c | 
+						c horizontal matchParent.
+						c vertical matchParent ] ].
+
+			lists := self children
+					select: [ :each | (each parent isKindOf: LePage) and: [ each isTextSnippet ] ].
+			listElements := lists collect: [ :list | columnBlock value ].
+
+			handler := DTMultiPaneReorderingHandler new
+					container: board;
+					panes: listElements;
+					yourself.
+
+			board addChildren: (lists collect: [ :list | columnBlock value ]).
+			listElements
+				do: [ :list | 
+					| element |
+					list children size
+						timesRepeat: [ element := BlElement new
+									size: 80 @ 60;
+									border: (BlBorder paint: Color black);
+									background: Color random;
+									margin: (BlInsets all: 2);
+									addEventHandler: handler;
+									yourself.
+							list addChild: element ] ].
+			board ]
 ]
