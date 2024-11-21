@@ -36,21 +36,21 @@ LePage >> gtKanbanFor: aView [
 
 			handler := DTMultiPaneReorderingHandler new
 					container: board;
-					panes: listElements;
+					panes: (listElements collect: #second);
 					yourself.
 
 			board addChildren: (listElements collect: #second).
 			listElements
 				do: [ :list | 
-					| element |
+					| card |
 					list first children size
-						timesRepeat: [ element := BlElement new
+						timesRepeat: [ card := BlElement new
 									size: 80 @ 60;
 									border: (BlBorder paint: Color black);
 									background: Color random;
 									margin: (BlInsets all: 2);
 									addEventHandler: handler;
 									yourself.
-							list second addChild: element ] ].
+							list second addChild: card ] ].
 			board ]
 ]
