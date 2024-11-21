@@ -14,7 +14,11 @@ LePage >> gtKanbanFor: aView [
 		title: 'Kanban';
 		priority: 100;
 		stencil: [ | board columnBlock lists handler |
-			board := BrFrame new matchParent.
+			board := BrFrame new
+					matchParent;
+					background: Color lightGray muchLighter;
+					padding: (BlInsets all: 2);
+					layout: BlLinearLayout horizontal.
 
 			columnBlock := [ BlElement new
 					border: (BlBorder paint: Color lightGray lighter);
@@ -28,18 +32,18 @@ LePage >> gtKanbanFor: aView [
 
 			lists := self children
 					select: [ :each | (each parent isKindOf: LePage) and: [ each isTextSnippet ] ].
-			listElements := lists collect: [ :list | columnBlock value ].
+			listElements := lists collect: [ :list | {list . columnBlock value} ].
 
 			handler := DTMultiPaneReorderingHandler new
 					container: board;
 					panes: listElements;
 					yourself.
 
-			board addChildren: (lists collect: [ :list | columnBlock value ]).
+			board addChildren: (listElements collect: #second).
 			listElements
 				do: [ :list | 
 					| element |
-					list children size
+					list first children size
 						timesRepeat: [ element := BlElement new
 									size: 80 @ 60;
 									border: (BlBorder paint: Color black);
@@ -47,6 +51,6 @@ LePage >> gtKanbanFor: aView [
 									margin: (BlInsets all: 2);
 									addEventHandler: handler;
 									yourself.
-							list addChild: element ] ].
+							list second addChild: element ] ].
 			board ]
 ]
