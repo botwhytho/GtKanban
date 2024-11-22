@@ -23,10 +23,20 @@ LePage >> gtKanbanFor: aView [
 			columnBlock := [ :listName | 
 				BrVerticalPane new
 					matchParent;
-					addChildren: {BlTextElement text: listName asRopedText.
+					addChildren: {BrHorizontalPane new alignCenter
+								constraintsDo: [ :c | 
+									c vertical fitContent.
+									c horizontal matchParent ];
+								background: Color white;
+								border: (BlBorder paint: Color lightGray lighter);
+								margin: (BlInsets all: 2);
+								addChild: (BrLabel new
+										aptitude: BrGlamorousLabelAptitude new glamorousRegularFontAndSize;
+										padding: (BlInsets all: 2);
+										text: listName asRopedText).
 							BlElement new
 								border: (BlBorder paint: Color lightGray lighter);
-								background: Color yellow muchLighter muchLighter lighter;
+								background: Color white;
 								layout: BlLinearLayout vertical;
 								margin: (BlInsets all: 2);
 								padding: (BlInsets all: 2);
