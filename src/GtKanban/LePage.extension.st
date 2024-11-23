@@ -20,7 +20,7 @@ LePage >> gtKanbanFor: aView [
 					padding: (BlInsets all: 2);
 					layout: BlLinearLayout horizontal.
 
-			columnBlock := [ :listName | 
+			columnBlock := [ :aSnippet | 
 				BrVerticalPane new
 					matchParent;
 					addChildren: {BrHorizontalPane new alignCenter
@@ -30,10 +30,15 @@ LePage >> gtKanbanFor: aView [
 								background: Color white;
 								border: (BlBorder paint: Color lightGray lighter);
 								margin: (BlInsets all: 2);
-								addChild: (BrLabel new
-										aptitude: BrGlamorousLabelAptitude new glamorousRegularFontAndSize;
+								addChild: (BrEditableLabel new
+										aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
 										padding: (BlInsets all: 2);
-										text: listName asRopedText).
+										text: aSnippet string asRopedText;
+										when: BrEditorAcceptWish
+											do: [ :aWish | 
+												aWish text asString = aSnippet string
+													ifFalse: [ aSnippet string: aWish text asString.
+														aSnippet announceContentChanged ] ]).
 							BlElement new
 								border: (BlBorder paint: Color lightGray lighter);
 								background: Color white;
@@ -49,7 +54,7 @@ LePage >> gtKanbanFor: aView [
 			listElements := lists
 					collect: [ :list | 
 						| element |
-						element := columnBlock value: list string.
+						element := columnBlock value: list.
 						element children second userData at: #snippet put: list.
 						element ].
 
@@ -69,13 +74,19 @@ LePage >> gtKanbanFor: aView [
 										c vertical exact: 60.
 										c horizontal matchParent ];
 									border: (BlBorder paint: Color black);
-									background: Color random;
-									margin: (BlInsets all: 2);
-									addChild: (BrLabel new
-											aptitude: BrGlamorousLabelAptitude new glamorousRegularFontAndSize;
-											padding: (BlInsets all: 2);
-											text: aSnippet string asRopedText);
-									addEventHandler: handler.
+									background: Color veryLightGray lighter lighter lighter.
+							card
+								margin: (BlInsets all: 2);
+								addChild: (BrEditableLabel new
+										aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
+										padding: (BlInsets all: 2);
+										text: aSnippet string asRopedText;
+										when: BrEditorAcceptWish
+											do: [ :aWish | 
+												aWish text asString = aSnippet string
+													ifFalse: [ aSnippet string: aWish text asString.
+														aSnippet announceContentChanged ] ]);
+								addEventHandler: handler.
 							card userData at: #snippet put: aSnippet.
 							list children second addChild: card ] ].
 			board ]
