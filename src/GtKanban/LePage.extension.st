@@ -69,23 +69,35 @@ LePage >> gtKanbanFor: aView [
 					| card |
 					(list children second userData at: #snippet) children
 						do: [ :aSnippet | 
-							card := BrHorizontalPane new alignCenter
+							card := BrFrame new
 									constraintsDo: [ :c | 
 										c vertical exact: 60.
 										c horizontal matchParent ];
 									border: (BlBorder paint: Color black);
-									background: Color veryLightGray lighter lighter lighter.
+									background: Color white.
 							card
 								margin: (BlInsets all: 2);
-								addChild: (BrEditableLabel new
-										aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
-										padding: (BlInsets all: 2);
-										text: aSnippet string asRopedText;
-										when: BrEditorAcceptWish
-											do: [ :aWish | 
-												aWish text asString = aSnippet string
-													ifFalse: [ aSnippet string: aWish text asString.
-														aSnippet announceContentChanged ] ]);
+								addChildren: {BrHorizontalPane new
+											alignCenter;
+											addChild: (BrEditableLabel new
+													aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
+													padding: (BlInsets all: 2);
+													text: aSnippet string asRopedText;
+													when: BrEditorAcceptWish
+														do: [ :aWish | 
+															aWish text asString = aSnippet string
+																ifFalse: [ aSnippet string: aWish text asString.
+																	aSnippet announceContentChanged ] ]).
+										BrButton new
+											zIndex: 1000;
+											aptitude: BrGlamorousButtonWithIconAptitude;
+											margin: (BlInsets all: 2);
+											constraintsDo: [ :c | 
+												c frame horizontal alignRight.
+												c frame vertical alignTop ];
+											label: 'Delete card';
+											icon: BrGlamorousVectorIcons close;
+											action: [ :aButton :aBrButtonModel :aBlClickEvent | aSnippet removeSelf. card removeFromParent ]};
 								addEventHandler: handler.
 							card userData at: #snippet put: aSnippet.
 							list children second addChild: card ] ].
