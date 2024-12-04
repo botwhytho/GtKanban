@@ -69,7 +69,8 @@ LePage >> gtKanbanFor: aView [
 					| card |
 					(list children second userData at: #snippet) children
 						do: [ :aSnippet | 
-							card := BrFrame new
+							card := BrHorizontalPane new alignCenter;
+									clipChildren: false;
 									constraintsDo: [ :c | 
 										c vertical exact: 60.
 										c horizontal matchParent ];
@@ -77,9 +78,7 @@ LePage >> gtKanbanFor: aView [
 									background: Color white.
 							card
 								margin: (BlInsets all: 2);
-								addChildren: {BrHorizontalPane new
-											alignCenter;
-											addChild: (BrEditableLabel new
+								addChildren: {BrEditableLabel new
 													aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
 													padding: (BlInsets all: 2);
 													text: aSnippet string asRopedText;
@@ -87,17 +86,19 @@ LePage >> gtKanbanFor: aView [
 														do: [ :aWish | 
 															aWish text asString = aSnippet string
 																ifFalse: [ aSnippet string: aWish text asString.
-																	aSnippet announceContentChanged ] ]).
-										BrButton new
+																	aSnippet announceContentChanged ] ].
+										GtInspectorRoundButtonStencil small asElement
+											icon: (BrPlusIconStencil close radius: 3) asElement;
 											zIndex: 1000;
-											aptitude: BrGlamorousButtonWithIconAptitude;
-											margin: (BlInsets all: 2);
+											margin: (BlInsets all: 10);
 											constraintsDo: [ :c | 
-												c frame horizontal alignRight.
-												c frame vertical alignTop ];
+													c ignoreByLayout.
+													c ignored horizontal alignCenterAt: 1.0.
+													c ignored vertical alignCenterAt: 0.0 ];
 											label: 'Delete card';
-											icon: BrGlamorousVectorIcons close;
-											action: [ :aButton :aBrButtonModel :aBlClickEvent | aSnippet removeSelf. card removeFromParent ]};
+											action: [ :aButton :aBrButtonModel :aBlClickEvent | 
+												aSnippet removeSelf.
+												card removeFromParent ]};
 								addEventHandler: handler.
 							card userData at: #snippet put: aSnippet.
 							list children second addChild: card ] ].

@@ -20,8 +20,8 @@ GtKanbanReorderingHandler >> dragEndEvent: anEvent [
 		ifFalse: [ newListPosition > list children size
 				ifTrue: [ list addSnippet: card after: list children last ]
 				ifFalse: [ list addSnippet: card beforeIndex: newListPosition + 1 ] ].
-	draggable inform: 'Card moved to list ' , (draggable parent userData at: #snippet) string
-		, ' in position ' , (draggable parent childIndexOf: draggable) asString.
+	"draggable inform: 'Card moved to list ' , (draggable parent userData at: #snippet) string
+		, ' in position ' , (draggable parent childIndexOf: draggable) asString."
 ]
 
 { #category : #'as yet unclassified' }
@@ -29,7 +29,7 @@ GtKanbanReorderingHandler >> dragStartEvent: anEvent [
 	| draggable |
 	draggable := anEvent currentTarget.
 	anEvent currentTarget width: anEvent currentTarget width.
-	draggable inform: 'Card moved from list ' , (draggable parent userData at: #snippet) string
-		, ' in position ' , (draggable parent childIndexOf: draggable) asString.
+	"draggable inform: 'Card moved from list ' , (draggable parent userData at: #snippet) string
+		, ' in position ' , (draggable parent childIndexOf: draggable) asString."
 	super dragStartEvent: anEvent
 ]
