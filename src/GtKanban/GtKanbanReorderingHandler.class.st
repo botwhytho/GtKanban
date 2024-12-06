@@ -19,7 +19,7 @@ GtKanbanReorderingHandler >> dragEndEvent: anEvent [
 		ifTrue: [ list addFirstSnippet: card ]
 		ifFalse: [ newListPosition > list children size
 				ifTrue: [ list addSnippet: card after: list children last ]
-				ifFalse: [ list addSnippet: card beforeIndex: newListPosition + 1 ] ].
+				ifFalse: [ list addSnippet: card beforeIndex: newListPosition ] ].
 	"draggable inform: 'Card moved to list ' , (draggable parent userData at: #snippet) string
 		, ' in position ' , (draggable parent childIndexOf: draggable) asString."
 ]
