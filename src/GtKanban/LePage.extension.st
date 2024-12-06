@@ -21,24 +21,39 @@ LePage >> gtKanbanFor: aView [
 					layout: BlLinearLayout horizontal.
 
 			columnBlock := [ :aSnippet | 
-				BrVerticalPane new
+				| listElement |
+				listElement := BrVerticalPane new.
+				listElement
 					matchParent;
 					addChildren: {BrHorizontalPane new alignCenter
+								clipChildren: false;
 								constraintsDo: [ :c | 
 									c vertical fitContent.
 									c horizontal matchParent ];
 								background: Color white;
 								border: (BlBorder paint: Color lightGray lighter);
 								margin: (BlInsets all: 2);
-								addChild: (BrEditableLabel new
-										aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
-										padding: (BlInsets all: 2);
-										text: aSnippet string asRopedText;
-										when: BrEditorAcceptWish
-											do: [ :aWish | 
-												aWish text asString = aSnippet string
-													ifFalse: [ aSnippet string: aWish text asString.
-														aSnippet announceContentChanged ] ]).
+								addChildren: {BrEditableLabel new
+											aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
+											margin: (BlInsets all: 5);
+											text: aSnippet string asRopedText;
+											when: BrEditorAcceptWish
+												do: [ :aWish | 
+													aWish text asString = aSnippet string
+														ifFalse: [ aSnippet string: aWish text asString.
+															aSnippet announceContentChanged ] ].
+										GtInspectorRoundButtonStencil small asElement
+											icon: (BrPlusIconStencil close radius: 3) asElement;
+											zIndex: 1000;
+											margin: (BlInsets all: 10);
+											constraintsDo: [ :c | 
+												c ignoreByLayout.
+												c ignored horizontal alignCenterAt: 1.0.
+												c ignored vertical alignCenterAt: 0.0 ];
+											label: 'Delete list';
+											action: [ :aButton :aBrButtonModel :aBlClickEvent | 
+												aSnippet removeSelf.
+												listElement removeFromParent ]}.
 							BlElement new
 								border: (BlBorder paint: Color lightGray lighter);
 								background: Color white;
@@ -69,7 +84,8 @@ LePage >> gtKanbanFor: aView [
 					| card |
 					(list children second userData at: #snippet) children
 						do: [ :aSnippet | 
-							card := BrHorizontalPane new alignCenter;
+							card := BrHorizontalPane new
+									alignCenter;
 									clipChildren: false;
 									constraintsDo: [ :c | 
 										c vertical exact: 60.
@@ -79,22 +95,22 @@ LePage >> gtKanbanFor: aView [
 							card
 								margin: (BlInsets all: 2);
 								addChildren: {BrEditableLabel new
-													aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
-													padding: (BlInsets all: 2);
-													text: aSnippet string asRopedText;
-													when: BrEditorAcceptWish
-														do: [ :aWish | 
-															aWish text asString = aSnippet string
-																ifFalse: [ aSnippet string: aWish text asString.
-																	aSnippet announceContentChanged ] ].
+											aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
+											padding: (BlInsets all: 2);
+											text: aSnippet string asRopedText;
+											when: BrEditorAcceptWish
+												do: [ :aWish | 
+													aWish text asString = aSnippet string
+														ifFalse: [ aSnippet string: aWish text asString.
+															aSnippet announceContentChanged ] ].
 										GtInspectorRoundButtonStencil small asElement
 											icon: (BrPlusIconStencil close radius: 3) asElement;
 											zIndex: 1000;
 											margin: (BlInsets all: 10);
 											constraintsDo: [ :c | 
-													c ignoreByLayout.
-													c ignored horizontal alignCenterAt: 1.0.
-													c ignored vertical alignCenterAt: 0.0 ];
+												c ignoreByLayout.
+												c ignored horizontal alignCenterAt: 1.0.
+												c ignored vertical alignCenterAt: 0.0 ];
 											label: 'Delete card';
 											action: [ :aButton :aBrButtonModel :aBlClickEvent | 
 												aSnippet removeSelf.
