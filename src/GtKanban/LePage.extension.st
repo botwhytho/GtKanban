@@ -62,8 +62,7 @@ LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHan
 					when: BrEditorAcceptWish
 						do: [ :aWish | 
 							aWish text asString = aSnippet string
-								ifFalse: [ aSnippet string: aWish text asString.
-									aSnippet announceContentChanged ] ].
+								ifFalse: [ aSnippet updateText: aWish text asString asRopedText ] ].
 				GtInspectorRoundButtonStencil small asElement
 					icon: (BrPlusIconStencil close radius: 3) asElement;
 					zIndex: 1000;
@@ -104,8 +103,7 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 								when: BrEditorAcceptWish
 									do: [ :aWish | 
 										aWish text asString = aListSnippet string
-											ifFalse: [ aListSnippet string: aWish text asString.
-												aListSnippet announceContentChanged ] ].
+											ifFalse: [ aListSnippet updateText: aWish text asString asRopedText ] ].
 							GtInspectorRoundButtonStencil small asElement
 								icon: (BrPlusIconStencil close radius: 3) asElement;
 								zIndex: 1000;
