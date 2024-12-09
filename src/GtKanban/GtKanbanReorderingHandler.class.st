@@ -12,7 +12,8 @@ GtKanbanReorderingHandler >> dragEndEvent: anEvent [
 	draggable constraintsDo: [ :c | c horizontal matchParent ].
 	card := draggable userData at: #snippet.
 	list := draggable parent userData at: #snippet.
-	newListPosition := draggable parent childIndexOf: draggable.
+	"Index math is needed here to take into account the new card button which is a child of the list element"
+	newListPosition := (draggable parent childIndexOf: draggable) - 1.
 
 	card parent removeSnippet: card.
 	list children isEmpty
