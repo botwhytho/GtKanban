@@ -22,23 +22,18 @@ LePage >> gtKanbanFor: aView [
 
 			lists := self children
 					select: [ :each | (each parent isKindOf: LePage) and: [ each isTextSnippet ] ].
+			handler := GtKanbanReorderingHandler new container: board.
 			listElements := lists
 					collect: [ :list | 
 						| element |
-						element := self kanbanListElementFromSnippet: list.
+						element := self kanbanListElementFromSnippet: list withHandler: handler.
 						element children second userData at: #snippet put: list.
 						element ].
-
-			handler := GtKanbanReorderingHandler new
-					container: board;
-					panes: (listElements collect: [ :each | each children second ]);
-					yourself.
-
+			handler panes: (listElements collect: [ :each | each children second ]).
 			board addChildren: listElements.
 			listElements
 				do: [ :list | 
 					(list children second userData at: #snippet) children
-						
 						do: [ :aSnippet | 
 							self
 								kanbanCardElementFromSnippet: aSnippet
@@ -87,7 +82,7 @@ LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHan
 ]
 
 { #category : #'*GtKanban' }
-LePage >> kanbanListElementFromSnippet: aSnippet [
+LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 	| listElement |
 	listElement := BrVerticalPane new
 			hMatchParent;
@@ -105,12 +100,12 @@ LePage >> kanbanListElementFromSnippet: aSnippet [
 					addChildren: {BrEditableLabel new
 								aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
 								margin: (BlInsets all: 5);
-								text: aSnippet string asRopedText;
+								text: aListSnippet string asRopedText;
 								when: BrEditorAcceptWish
 									do: [ :aWish | 
-										aWish text asString = aSnippet string
-											ifFalse: [ aSnippet string: aWish text asString.
-												aSnippet announceContentChanged ] ].
+										aWish text asString = aListSnippet string
+											ifFalse: [ aListSnippet string: aWish text asString.
+												aListSnippet announceContentChanged ] ].
 							GtInspectorRoundButtonStencil small asElement
 								icon: (BrPlusIconStencil close radius: 3) asElement;
 								zIndex: 1000;
@@ -121,10 +116,11 @@ LePage >> kanbanListElementFromSnippet: aSnippet [
 									c ignored vertical alignCenterAt: 0.0 ];
 								label: 'Delete list';
 								action: [ :aButton :aBrButtonModel :aBlClickEvent | 
-									aSnippet removeSelf.
+									aListSnippet removeSelf.
 									listElement removeFromParent ]}.
 				BlElement new
 					id: #kanbanList;
+					clipChildren: false;
 					border: (BlBorder paint: Color lightGray lighter);
 					background: Color white;
 					layout: BlLinearLayout vertical;
@@ -144,7 +140,16 @@ LePage >> kanbanListElementFromSnippet: aSnippet [
 							constraintsDo: [ :c | 
 								c ignoreByLayout.
 								c ignored horizontal alignCenterAt: 0.5.
-								c ignored vertical alignCenterAt: 0.98 ];
+								c ignored vertical alignCenterAt: 1 ];
 							label: 'Add Card';
-							action: [ :aButton :aBrButtonModel :aBlClickEvent | self halt ])}
+							action: [ :aButton :aBrButtonModel :aBlClickEvent | 
+								| newCardSnippet |
+								newCardSnippet := LeTextSnippet string: 'New Task'.
+								aListSnippet children isEmpty
+									ifTrue: [ aListSnippet addFirstSnippet: newCardSnippet ]
+									ifFalse: [ aListSnippet addSnippet: newCardSnippet after: aListSnippet children last ].
+								self
+									kanbanCardElementFromSnippet: newCardSnippet
+									inList: aListSnippet
+									withHandler: aHandler ])}
 ]
