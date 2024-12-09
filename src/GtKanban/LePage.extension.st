@@ -1,6 +1,19 @@
 Extension { #name : #LePage }
 
 { #category : #'*GtKanban' }
+LePage >> addHistorySnippet [
+	| jsonSnippet |
+	(self children select: [ :each | each isKindOf: LeStringSnippet ]) ifEmpty: [
+	
+	jsonSnippet := LeStringSnippet new
+			contentString: '[]';
+			bindingName: 'boardHistory';
+			format: JSONParser name.
+	self addSnippet: jsonSnippet
+	]
+]
+
+{ #category : #'*GtKanban' }
 LePage >> asPhlowTool [
 	<return: #LePhlowTool>
 	^ self type asLepiterPagePhlowTool
@@ -14,6 +27,7 @@ LePage >> gtKanbanFor: aView [
 		title: 'Kanban';
 		priority: 50;
 		stencil: [ | board lists handler |
+			self addHistorySnippet.
 			board := BrFrame new
 					matchParent;
 					background: Color lightGray muchLighter;
