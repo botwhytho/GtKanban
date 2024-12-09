@@ -12,7 +12,7 @@ LePage >> gtKanbanFor: aView [
 	| listElements |
 	^ aView explicit
 		title: 'Kanban';
-		priority: 100;
+		priority: 50;
 		stencil: [ | board lists handler |
 			board := BrFrame new
 					matchParent;
@@ -150,6 +150,6 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 									ifFalse: [ aListSnippet addSnippet: newCardSnippet after: aListSnippet children last ].
 								self
 									kanbanCardElementFromSnippet: newCardSnippet
-									inList: aListSnippet
+									inList: listElement
 									withHandler: aHandler ])}
 ]
