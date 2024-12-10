@@ -2,10 +2,12 @@
 ## Installation
 
 ```st
-Metacello new
-	repository: '';
-	baseline: 'GtKanban';
-	load
+[ EpMonitor current
+	disableDuring: [ Metacello new
+			baseline: 'GtKanban';
+			repository: 'github://botwhytho/GtKanban:main/src';
+			onConflictUseLoaded;
+			load ] ] forkAt: 29 named: #GtKanban
 ```
 
 ## Load Lepiter
