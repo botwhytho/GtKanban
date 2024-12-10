@@ -87,6 +87,23 @@ LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHan
 						c ignored vertical alignCenterAt: 0.0 ];
 					label: 'Delete card';
 					action: [ :aButton :aBrButtonModel :aBlClickEvent | 
+						| history jsonSnippet map newJSON |
+						map := {#action -> 'Card Deleted'.
+								#time -> DateAndTime now asStringYMDHM.
+								#card -> aSnippet uidString.
+								#cardHeading -> aSnippet string.
+								#list -> aSnippet parent uidString} asDictionary.
+
+						jsonSnippet := aSnippet page children
+								detect: [ :each | each isKindOf: LeStringSnippet ].
+						history := (STONJSON fromString: jsonSnippet contentString)
+								asOrderedCollection.
+						history add: map.
+						newJSON := STONJSON toStringPretty: history asArray.
+						jsonSnippet contentString: newJSON.
+						jsonSnippet updateEditTimeAndEmail.
+						jsonSnippet announceTextChangedBy: jsonSnippet parent.
+
 						aSnippet removeSelf.
 						card removeFromParent ]};
 		addEventHandler: aHandler.
