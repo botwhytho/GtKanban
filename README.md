@@ -6,7 +6,6 @@
 	disableDuring: [ Metacello new
 			baseline: 'GtKanban';
 			repository: 'github://botwhytho/GtKanban:main/src';
-			onConflictUseLoaded;
 			load ] ] forkAt: 29 named: #GtKanban
 ```
 
