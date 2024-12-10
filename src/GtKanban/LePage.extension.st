@@ -20,12 +20,53 @@ LePage >> asPhlowTool [
 ]
 
 { #category : #'*GtKanban' }
+LePage >> gtKanbanBoardHistoryFor: aView [
+	<gtView>
+	| boardHistory jsonSnippet |
+	((self children
+		detect: [ :each | each isKindOf: LeStringSnippet ]
+		ifFound: [ :found | 
+			jsonSnippet := found.
+			true ]
+		ifNone: [ false ]) and: [ jsonSnippet bindingName = 'boardHistory' ])
+		ifFalse: [ ^ aView empty ].
+	boardHistory := (((STONJSON fromString: jsonSnippet contentString)
+			groupedBy: [ :each | each at: 'card' ])
+			collect: [ :each | each sorted: [ :inner | DateAndTime fromString: (inner at: 'time') ] ascending ])
+			associations.
+	^ aView columnedTree
+		title: 'Kanban Board History';
+		priority: 46;
+		items: boardHistory;
+		children: [ :each | each value isArray ifTrue: [ each value ] ifFalse: [ #() ] ];
+		column: 'Actions'
+			text: [ :each | 
+				each isAssociation
+					ifTrue: [ self database
+							blockWithUID: (LeUID new uidString: each key)
+							ifPresent: [ :present | 
+								present string
+									in: [ :aString | 
+										(present parent isKindOf: LePage)
+											ifTrue: [ aString , ' (list)' ]
+											ifFalse: [ aString ] ] ]
+							ifAbsent: [ each value
+									detect: [ :inner | (inner at: 'action') = 'Card Deleted' ]
+									ifFound: [ :found | found at: 'cardHeading' ]
+									ifNone: [ 'Card Deleted' ] ] ]
+					ifFalse: [ each at: 'action' ] ];
+		column: 'Time'
+			text: [ :each | each isAssociation ifTrue: [ '' ] ifFalse: [ each at: 'time' ] ];
+		expandAll
+]
+
+{ #category : #'*GtKanban' }
 LePage >> gtKanbanFor: aView [
 	<gtView>
 	| listElements |
 	^ aView explicit
 		title: 'Kanban';
-		priority: 50;
+		priority: 45;
 		stencil: [ | board lists handler |
 			self addHistorySnippet.
 			board := BrFrame new
