@@ -134,7 +134,24 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 								when: BrEditorAcceptWish
 									do: [ :aWish | 
 										aWish text asString = aListSnippet string
-											ifFalse: [ aListSnippet updateText: aWish text asString asRopedText ] ].
+											ifFalse: [ | history jsonSnippet map newJSON |
+												map := {#action -> 'List Modified'.
+														#time -> DateAndTime now asStringYMDHM.
+														#list -> aListSnippet uidString.
+														#oldValue -> aListSnippet string.
+														#newValue -> aWish text asString} asDictionary.
+
+												jsonSnippet := aListSnippet page children
+														detect: [ :each | each isKindOf: LeStringSnippet ].
+												history := (STONJSON fromString: jsonSnippet contentString)
+														asOrderedCollection.
+												history add: map.
+												newJSON := STONJSON toStringPretty: history asArray.
+												jsonSnippet contentString: newJSON.
+												jsonSnippet updateEditTimeAndEmail.
+												jsonSnippet announceTextChangedBy: jsonSnippet parent.
+
+												aListSnippet updateText: aWish text asString asRopedText ] ].
 							GtInspectorRoundButtonStencil small asElement
 								icon: (BrPlusIconStencil close radius: 3) asElement;
 								zIndex: 1000;

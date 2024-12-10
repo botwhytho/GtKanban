@@ -14,7 +14,7 @@ GtKanbanReorderingHandler >> dragEndEvent: anEvent [
 	list := draggable parent userData at: #snippet.
 	"Index math is needed here to take into account the new card button which is a child of the list element"
 	newListPosition := (draggable parent childIndexOf: draggable) - 1.
-	map := {#action -> 'Move'.
+	map := {#action -> 'Card Moved'.
 			#time -> DateAndTime now asStringYMDHM.
 			#direction -> 'To'.
 			#card -> card uidString.
@@ -46,7 +46,7 @@ GtKanbanReorderingHandler >> dragStartEvent: anEvent [
 	list := draggable parent userData at: #snippet.
 	"Index math is needed here to take into account the new card button which is a child of the list element"
 	position := (draggable parent childIndexOf: draggable) - 1.
-	map := { #action -> 'Move'.
+	map := { #action -> 'Card Moved'.
 	#time -> DateAndTime now asStringYMDHM.
 	#direction -> 'From'.
 	#card -> card uidString.
