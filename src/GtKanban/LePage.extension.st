@@ -155,7 +155,7 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 								c ignored vertical alignCenterAt: 1 ];
 							label: 'Add Card';
 							action: [ :aButton :aBrButtonModel :aBlClickEvent | 
-								| newCardSnippet |
+								| history jsonSnippet map newCardSnippet newJSON |
 								newCardSnippet := LeTextSnippet string: 'New Task'.
 								aListSnippet children isEmpty
 									ifTrue: [ aListSnippet addFirstSnippet: newCardSnippet ]
@@ -163,5 +163,19 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 								self
 									kanbanCardElementFromSnippet: newCardSnippet
 									inList: listElement
-									withHandler: aHandler ])}
+									withHandler: aHandler.
+								map := {#action -> 'Card Added'.
+										#time -> DateAndTime now asStringYMDHM.
+										#card -> newCardSnippet uidString.
+										#list -> aListSnippet uidString} asDictionary.
+
+								jsonSnippet := aListSnippet page children
+										detect: [ :each | each isKindOf: LeStringSnippet ].
+								history := (STONJSON fromString: jsonSnippet contentString)
+										asOrderedCollection.
+								history add: map.
+								newJSON := STONJSON toStringPretty: history asArray.
+								jsonSnippet contentString: newJSON.
+								jsonSnippet updateEditTimeAndEmail.
+								jsonSnippet announceTextChangedBy: jsonSnippet parent ])}
 ]
