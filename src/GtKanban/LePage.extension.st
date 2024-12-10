@@ -78,7 +78,7 @@ LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHan
 							aWish text asString = aSnippet string
 								ifFalse: [ | history jsonSnippet map newJSON |
 									map := {#action -> 'Card Modified'.
-											#time -> DateAndTime now asStringYMDHM.
+											#time -> DateAndTime now printToSeconds.
 											#card -> aSnippet uidString.
 											#list -> aSnippet parent uidString.
 											#oldValue -> aSnippet string.
@@ -107,7 +107,7 @@ LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHan
 					action: [ :aButton :aBrButtonModel :aBlClickEvent | 
 						| history jsonSnippet map newJSON |
 						map := {#action -> 'Card Deleted'.
-								#time -> DateAndTime now asStringYMDHM.
+								#time -> DateAndTime now printToSeconds.
 								#card -> aSnippet uidString.
 								#cardHeading -> aSnippet string.
 								#list -> aSnippet parent uidString} asDictionary.
@@ -154,7 +154,8 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 										aWish text asString = aListSnippet string
 											ifFalse: [ | history jsonSnippet map newJSON |
 												map := {#action -> 'List Modified'.
-														#time -> DateAndTime now asStringYMDHM.
+														#time -> DateAndTime now printToSeconds.
+														#card -> aListSnippet uidString.
 														#list -> aListSnippet uidString.
 														#oldValue -> aListSnippet string.
 														#newValue -> aWish text asString} asDictionary.
@@ -217,7 +218,7 @@ LePage >> kanbanListElementFromSnippet: aListSnippet withHandler: aHandler [
 									inList: listElement
 									withHandler: aHandler.
 								map := {#action -> 'Card Added'.
-										#time -> DateAndTime now asStringYMDHM.
+										#time -> DateAndTime now printToSeconds.
 										#card -> newCardSnippet uidString.
 										#list -> aListSnippet uidString} asDictionary.
 
