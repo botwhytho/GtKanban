@@ -76,7 +76,25 @@ LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHan
 					when: BrEditorAcceptWish
 						do: [ :aWish | 
 							aWish text asString = aSnippet string
-								ifFalse: [ aSnippet updateText: aWish text asString asRopedText ] ].
+								ifFalse: [ | history jsonSnippet map newJSON |
+									map := {#action -> 'Card Modified'.
+											#time -> DateAndTime now asStringYMDHM.
+											#card -> aSnippet uidString.
+											#list -> aSnippet parent uidString.
+											#oldValue -> aSnippet string.
+											#newValue -> aWish text asString} asDictionary.
+
+									jsonSnippet := aSnippet page children
+											detect: [ :each | each isKindOf: LeStringSnippet ].
+									history := (STONJSON fromString: jsonSnippet contentString)
+											asOrderedCollection.
+									history add: map.
+									newJSON := STONJSON toStringPretty: history asArray.
+									jsonSnippet contentString: newJSON.
+									jsonSnippet updateEditTimeAndEmail.
+									jsonSnippet announceTextChangedBy: jsonSnippet parent.
+
+									aSnippet updateText: aWish text asString asRopedText ] ].
 				GtInspectorRoundButtonStencil small asElement
 					icon: (BrPlusIconStencil close radius: 3) asElement;
 					zIndex: 1000;
