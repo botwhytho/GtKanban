@@ -22,10 +22,5 @@ BaselineOfGtKanban class >> loadLepiter [
 { #category : #baseline }
 BaselineOfGtKanban >> baseline: spec [
 	<baseline>
-	^ spec
-		for: #common
-		do: [ spec
-				baseline: 'DrawingTool'
-				with: [ spec repository: 'github://botwhytho/GToolkitExperiments:master/src' ].
-			spec package: 'GtKanban' ]
+	^ spec for: #common do: [ spec package: 'GtKanban' ]
 ]
