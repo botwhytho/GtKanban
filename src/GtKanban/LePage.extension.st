@@ -77,7 +77,7 @@ LePage >> gtKanbanFor: aView [
 
 			lists := self children
 					select: [ :each | (each parent isKindOf: LePage) and: [ each isTextSnippet ] ].
-			handler := GtKanbanReorderingHandler new container: board.
+			handler := GtKanbanMultiPaneReorderingHandler new container: board.
 			listElements := lists
 					collect: [ :list | 
 						| element |
