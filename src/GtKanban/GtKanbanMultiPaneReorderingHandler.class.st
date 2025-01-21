@@ -28,7 +28,7 @@ GtKanbanMultiPaneReorderingHandler >> dragEndEvent: anEvent [
 	overlay detach.
 
 	anEvent currentTarget dispatchEvent: BlPullEndEvent new.
-	self onDragEndEvent: anEvent
+	self onDragEndEvent: draggable
 ]
 
 { #category : #accessing }
@@ -113,7 +113,7 @@ GtKanbanMultiPaneReorderingHandler >> movePlaceholderToCorrectParent: anEvent [
 { #category : #accessing }
 GtKanbanMultiPaneReorderingHandler >> onDragEndEvent: anEvent [
 	| card draggable history jsonSnippet map newJSON list newListPosition |
-	draggable := anEvent currentTarget.
+	draggable := anEvent.
 	draggable constraintsDo: [ :c | c horizontal matchParent ].
 	card := draggable userData at: #snippet.
 	list := draggable parent userData at: #snippet.
@@ -149,7 +149,7 @@ GtKanbanMultiPaneReorderingHandler >> onDragStartEvent: anEvent [
 	draggable := anEvent currentTarget.
 	card := draggable userData at: #snippet.
 	list := draggable parent userData at: #snippet.
-	self flag: #TODO.	"Index math is needed here to take into account the new card button which is a child of the list element"
+	"Index math is needed here to take into account the new card button which is a child of the list element"
 	position := (draggable parent childIndexOf: draggable) - 1.
 	map := {#action -> 'Card Moved'.
 			#time -> DateAndTime now printToSeconds.
