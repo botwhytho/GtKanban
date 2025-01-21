@@ -111,14 +111,13 @@ GtKanbanMultiPaneReorderingHandler >> movePlaceholderToCorrectParent: anEvent [
 ]
 
 { #category : #accessing }
-GtKanbanMultiPaneReorderingHandler >> onDragEndEvent: anEvent [
-	| card draggable history jsonSnippet map newJSON list newListPosition |
-	draggable := anEvent.
-	draggable constraintsDo: [ :c | c horizontal matchParent ].
-	card := draggable userData at: #snippet.
-	list := draggable parent userData at: #snippet.
+GtKanbanMultiPaneReorderingHandler >> onDragEndEvent: aDraggable [
+	| card history jsonSnippet map newJSON list newListPosition |
+	aDraggable constraintsDo: [ :c | c horizontal matchParent ].
+	card := aDraggable userData at: #snippet.
+	list := aDraggable parent userData at: #snippet.
 	"Index math is needed here to take into account the new card button which is a child of the list element"
-	newListPosition := (draggable parent childIndexOf: draggable) - 1.
+	newListPosition := (aDraggable parent childIndexOf: aDraggable) - 1.
 	map := {#action -> 'Card Moved'.
 			#time -> DateAndTime now printToSeconds.
 			#direction -> 'To'.
