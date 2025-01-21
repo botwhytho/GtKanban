@@ -101,7 +101,6 @@ LePage >> gtKanbanFor: aView [
 LePage >> kanbanCardElementFromSnippet: aSnippet inList: aList withHandler: aHandler [
 	| card |
 	card := BrHorizontalPane new
-			id: #kanbanCard;
 			alignCenter;
 			clipChildren: false;
 			constraintsDo: [ :c | 
