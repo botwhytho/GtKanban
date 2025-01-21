@@ -30,10 +30,11 @@ LeCirclePageType class >> leJsonV4Name [
 
 { #category : #'as yet unclassified' }
 LeCirclePageType >> customPhlowTool [
-	^ GtPhlowValuableTool new
+	^ GtPhlowExplicitTool new
+		withIconAptitude
 		"name: 'Circle';"
 		icon: BrGlamorousVectorIcons rustLogo;
-		valuable: [ BrFrame new
+		stencil: [ BrFrame new
 				matchParent;
 				addChild: BlBasicExamples new circle ]
 ]
