@@ -13,7 +13,6 @@ LeCirclePageType class >> initialize [
 			(aDatabase instVarNamed: #pagesByType)
 				at: LeCirclePageType
 				ifAbsentPut: [ GtStringContentDictionary new ] ]
-	"Need to create an `icon` slot on `GtPhlowValuableTool` if it doesn't exist."
 ]
 
 { #category : #accesing }
@@ -29,12 +28,37 @@ LeCirclePageType class >> leJsonV4Name [
 ]
 
 { #category : #'as yet unclassified' }
+LeCirclePageType >> asLepiterPagePhlowTool [
+	^ GtPhlowCompositeTool new
+		addTool: (GtPhlowExplicitTool new withIconAptitude
+				icon: BrGlamorousVectorIcons rustLogo;
+				stencil: [ BrHorizontalPane new
+						alignCenter;
+						matchParent;
+						geometry: BlCircleGeometry new;
+						background: Color red;
+						border: (BlBorder paint: (Color blue alpha: 0.5) width: 6);
+						addChild: (BrLabel new
+								aptitude: BrGlamorousLabelAptitude;
+								text: self title);
+						when: BlClickEvent
+							do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]);
+		addTool: (GtPhlowTool default object: self page)
+]
+
+{ #category : #'as yet unclassified' }
 LeCirclePageType >> customPhlowTool [
-	^ GtPhlowExplicitTool new
-		withIconAptitude
-		"name: 'Circle';"
+	^ GtPhlowExplicitTool new withIconAptitude
 		icon: BrGlamorousVectorIcons rustLogo;
-		stencil: [ BrFrame new
+		stencil: [ BrHorizontalPane new
+				alignCenter;
 				matchParent;
-				addChild: BlBasicExamples new circle ]
+				geometry: BlCircleGeometry new;
+				background: Color red;
+				border: (BlBorder paint: (Color blue alpha: 0.5) width: 6);
+				addChild: (BrLabel new
+						aptitude: BrGlamorousLabelAptitude;
+						text: self title);
+				when: BlClickEvent
+					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
 ]

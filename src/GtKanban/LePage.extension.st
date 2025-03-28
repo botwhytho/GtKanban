@@ -20,6 +20,11 @@ LePage >> asPhlowTool [
 ]
 
 { #category : #'*GtKanban' }
+LePage >> gtDefaultInspectorTool [
+ ^ self asPhlowTool
+]
+
+{ #category : #'*GtKanban' }
 LePage >> gtKanbanBoardHistoryFor: aView [
 	<gtView>
 	| boardHistory jsonSnippet |
