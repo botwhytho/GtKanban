@@ -27,6 +27,11 @@ LeCirclePageType class >> leJsonV4Name [
 	^ 'circlePage'
 ]
 
+{ #category : #printing }
+LeCirclePageType class >> niceClassName [
+	^ 'Circle Page'
+]
+
 { #category : #'as yet unclassified' }
 LeCirclePageType >> asLepiterPagePhlowTool [
 	^ GtPhlowCompositeTool new
