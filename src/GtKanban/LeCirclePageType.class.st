@@ -32,10 +32,11 @@ LeCirclePageType >> asLepiterPagePhlowTool [
 	^ GtPhlowCompositeTool new
 		name: self page title;
 		addTool: (GtPhlowExplicitTool new withIconAptitude
-				icon: BrGlamorousVectorIcons rustLogo;
+				icon: BrGlamorousVectorIcons gt;
 				stencil: [ BrHorizontalPane new
 						alignCenter;
 						matchParent;
+						margin: (BlInsets all: 20);
 						geometry: BlCircleGeometry new;
 						background: Color red;
 						border: (BlBorder paint: (Color blue alpha: 0.5) width: 6);
@@ -44,6 +45,7 @@ LeCirclePageType >> asLepiterPagePhlowTool [
 								text: self title);
 						when: BlClickEvent
 							do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]);
+		addTool: (GtPhlowTool default object: self);
 		addTool: (GtPhlowTool default object: self page)
 ]
 
