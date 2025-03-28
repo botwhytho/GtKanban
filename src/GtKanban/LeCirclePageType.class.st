@@ -30,6 +30,7 @@ LeCirclePageType class >> leJsonV4Name [
 { #category : #'as yet unclassified' }
 LeCirclePageType >> asLepiterPagePhlowTool [
 	^ GtPhlowCompositeTool new
+		name: self page title;
 		addTool: (GtPhlowExplicitTool new withIconAptitude
 				icon: BrGlamorousVectorIcons rustLogo;
 				stencil: [ BrHorizontalPane new
@@ -61,4 +62,12 @@ LeCirclePageType >> customPhlowTool [
 						text: self title);
 				when: BlClickEvent
 					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
+]
+
+{ #category : #printing }
+LeCirclePageType >> printOn: aStream [
+
+	aStream 
+		nextPutAll: 'Cirlce Page: ';
+		print: title
 ]
