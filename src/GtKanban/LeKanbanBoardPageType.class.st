@@ -280,7 +280,7 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 									aListSnippet removeSelf.
 									listElement removeFromParent ];
 								in: [ :aCloseButton | 
-									aListSnippet string ifEmpty: [ aCloseButton disable ].
+									aListSnippet string ifEmpty: [ aCloseButton visibility: BlVisibility hidden ].
 									aCloseButton ]}.
 				BlElement new
 					id: #kanbanList;
@@ -329,7 +329,10 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 								newJSON := STONJSON toStringPretty: history asArray.
 								jsonSnippet contentString: newJSON.
 								jsonSnippet updateEditTimeAndEmail.
-								jsonSnippet announceTextChangedBy: jsonSnippet parent ])}
+								jsonSnippet announceTextChangedBy: jsonSnippet parent ];
+							in: [ :anElement | 
+								aListSnippet string ifEmpty: [ anElement visibility: BlVisibility hidden ].
+								anElement ])}
 ]
 
 { #category : #'event handling' }
