@@ -30,7 +30,7 @@ LeCirclePageType class >> niceClassName [
 	^ 'Circle Page'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 LeCirclePageType >> asLepiterPagePhlowTool [
 	^ GtPhlowCompositeTool new
 		name: self page title;
