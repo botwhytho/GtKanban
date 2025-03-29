@@ -10,3 +10,8 @@ LeDatabase >> pagesByName [
 		inject: namedPageClasses first value
 		into: [ :acc :each | acc , each value ]
 ]
+
+{ #category : #'*GtKanban' }
+LeDatabase >> pagesByType [
+	^ pagesByType
+]
