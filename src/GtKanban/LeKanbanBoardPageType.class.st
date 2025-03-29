@@ -59,9 +59,35 @@ LeKanbanBoardPageType >> asLepiterPagePhlowTool [
 ]
 
 { #category : #views }
+LeKanbanBoardPageType >> createLists: aBoard [
+	| lists handler listElements |
+	aBoard removeChildren.
+	lists := self page children
+			select: [ :each | (each parent isKindOf: LePage) and: [ each isTextSnippet ] ].
+	handler := GtKanbanMultiPaneReorderingHandler new container: aBoard.
+	listElements := lists
+			collect: [ :list | 
+				| element |
+				element := self kanbanListElementFromSnippet: list withHandler: handler.
+				element children second userData at: #snippet put: list.
+				element ].
+	handler panes: (listElements collect: [ :each | each children second ]).
+	aBoard addChildren: listElements.
+	listElements
+		do: [ :list | 
+			(list children second userData at: #snippet) children
+				do: [ :aSnippet | 
+					self
+						kanbanCardElementFromSnippet: aSnippet
+						inList: list
+						withHandler: handler ] ]
+]
+
+{ #category : #views }
 LeKanbanBoardPageType >> gtKanbanBoardHistoryFor: aView [
 	<gtView>
 	| boardHistory jsonSnippet |
+	self flag: #TODO. "Update view when actions added or on added to scene graph"
 	((self page children
 		detect: [ :each | each isKindOf: LeStringSnippet ]
 		ifFound: [ :found | 
@@ -114,27 +140,12 @@ LeKanbanBoardPageType >> gtKanbanFor: aView [
 					matchParent;
 					background: Color lightGray muchLighter;
 					padding: (BlInsets all: 2);
-					layout: BlLinearLayout horizontal.
-
-			lists := self page children
-					select: [ :each | (each parent isKindOf: LePage) and: [ each isTextSnippet ] ].
-			handler := GtKanbanMultiPaneReorderingHandler new container: board.
-			listElements := lists
-					collect: [ :list | 
-						| element |
-						element := self kanbanListElementFromSnippet: list withHandler: handler.
-						element children second userData at: #snippet put: list.
-						element ].
-			handler panes: (listElements collect: [ :each | each children second ]).
-			board addChildren: listElements.
-			listElements
-				do: [ :list | 
-					(list children second userData at: #snippet) children
-						do: [ :aSnippet | 
-							self
-								kanbanCardElementFromSnippet: aSnippet
-								inList: list
-								withHandler: handler ] ].
+					layout: BlLinearLayout horizontal;
+					when: BlElementAddedToSceneGraphEvent
+						do: [ :anEvent | 
+							anEvent consumed: true.
+							self onAddedToSceneGraphEvent: anEvent ].
+			self createLists: board.
 			board ]
 ]
 
@@ -166,7 +177,7 @@ LeKanbanBoardPageType >> kanbanCardElementFromSnippet: aSnippet inList: aList wi
 											#oldValue -> aSnippet string.
 											#newValue -> aWish text asString} asDictionary.
 
-									jsonSnippet := aSnippet page children
+									jsonSnippet := self page children
 											detect: [ :each | each isKindOf: LeStringSnippet ].
 									history := (STONJSON fromString: jsonSnippet contentString)
 											asOrderedCollection.
@@ -194,7 +205,7 @@ LeKanbanBoardPageType >> kanbanCardElementFromSnippet: aSnippet inList: aList wi
 								#cardHeading -> aSnippet string.
 								#list -> aSnippet parent uidString} asDictionary.
 
-						jsonSnippet := aSnippet page children
+						jsonSnippet := self page children
 								detect: [ :each | each isKindOf: LeStringSnippet ].
 						history := (STONJSON fromString: jsonSnippet contentString)
 								asOrderedCollection.
@@ -242,7 +253,7 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 														#oldValue -> aListSnippet string.
 														#newValue -> aWish text asString} asDictionary.
 
-												jsonSnippet := aListSnippet page children
+												jsonSnippet := self page children
 														detect: [ :each | each isKindOf: LeStringSnippet ].
 												history := (STONJSON fromString: jsonSnippet contentString)
 														asOrderedCollection.
@@ -252,7 +263,10 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 												jsonSnippet updateEditTimeAndEmail.
 												jsonSnippet announceTextChangedBy: jsonSnippet parent.
 
-												aListSnippet updateText: aWish text asString asRopedText ] ].
+												aListSnippet updateText: aWish text asString asRopedText.
+												aListSnippet nextSibling isTextSnippet
+													ifFalse: [ aListSnippet addSnippetAfterSelf: LeTextSnippet new.
+														self createLists: listElement parent ] ] ].
 							GtInspectorRoundButtonStencil small asElement
 								icon: (BrPlusIconStencil close radius: 3) asElement;
 								zIndex: 1000;
@@ -264,7 +278,10 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 								label: 'Delete list';
 								action: [ :aButton :aBrButtonModel :aBlClickEvent | 
 									aListSnippet removeSelf.
-									listElement removeFromParent ]}.
+									listElement removeFromParent ];
+								in: [ :aCloseButton | 
+									aListSnippet string ifEmpty: [ aCloseButton disable ].
+									aCloseButton ]}.
 				BlElement new
 					id: #kanbanList;
 					clipChildren: false;
@@ -304,7 +321,7 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 										#card -> newCardSnippet uidString.
 										#list -> aListSnippet uidString} asDictionary.
 
-								jsonSnippet := aListSnippet page children
+								jsonSnippet := self page children
 										detect: [ :each | each isKindOf: LeStringSnippet ].
 								history := (STONJSON fromString: jsonSnippet contentString)
 										asOrderedCollection.
@@ -313,6 +330,11 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 								jsonSnippet contentString: newJSON.
 								jsonSnippet updateEditTimeAndEmail.
 								jsonSnippet announceTextChangedBy: jsonSnippet parent ])}
+]
+
+{ #category : #'event handling' }
+LeKanbanBoardPageType >> onAddedToSceneGraphEvent: anEvent [
+	self createLists: anEvent currentTarget
 ]
 
 { #category : #printing }
