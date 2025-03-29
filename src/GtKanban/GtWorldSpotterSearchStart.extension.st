@@ -4,7 +4,7 @@ Extension { #name : #GtWorldSpotterSearchStart }
 GtWorldSpotterSearchStart >> gtCreateNewCustomPageFor: aSearch [
 	<gtSearch>
 	^ aSearch list
-		priority: 1;
+		priority: 24;
 		items: [ LeNamedPageType allSubclasses sorted: #name ascending ];
 		title: 'Create a New Custom Page Named:';
 		filter: GtSpotterReturnAllItemsFilter new;
