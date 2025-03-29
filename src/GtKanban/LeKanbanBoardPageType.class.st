@@ -33,14 +33,13 @@ LeKanbanBoardPageType class >> niceClassName [
 { #category : #'as yet unclassified' }
 LeKanbanBoardPageType >> addHistorySnippet [
 	| jsonSnippet |
-	(self page children select: [ :each | each isKindOf: LeStringSnippet ]) ifEmpty: [
-	
-	jsonSnippet := LeStringSnippet new
-			contentString: '[]';
-			bindingName: 'boardHistory';
-			format: JSONParser name.
-	self page addSnippet: jsonSnippet
-	]
+	self page children ifEmpty: [ self page addSnippet: LeTextSnippet new ].
+	(self page children select: [ :each | each isKindOf: LeStringSnippet ])
+		ifEmpty: [ jsonSnippet := LeStringSnippet new
+					contentString: '[]';
+					bindingName: 'boardHistory';
+					format: JSONParser name.
+			self page addSnippet: jsonSnippet ]
 ]
 
 { #category : #converting }
