@@ -129,12 +129,11 @@ LeKanbanBoardPageType >> gtKanbanBoardHistoryFor: aView [
 LeKanbanBoardPageType >> gtKanbanFor: aView [
 	"<gtView>"
 
-	| listElements |
 	self flag: #TODO.	"This doesn't need to be a view eventually if not going to appear on inspector. May want to keep it though"
 	^ aView explicit
 		title: 'Kanban';
 		priority: 45;
-		stencil: [ | board lists handler |
+		stencil: [ | board |
 			self addHistorySnippet.
 			board := BrFrame new
 					matchParent;
