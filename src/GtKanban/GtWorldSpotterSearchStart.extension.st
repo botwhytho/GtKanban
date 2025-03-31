@@ -7,6 +7,7 @@ GtWorldSpotterSearchStart >> gtCreateNewCustomPageFor: aSearch [
 		priority: 24;
 		items: [ LeNamedPageType allSubclasses sorted: #name ascending ];
 		title: 'Create a New Custom Page Named:';
+		flag: #TODO; "Below class is defined in another package, would need to re-create/move to upstream PR"
 		filter: GtSpotterReturnAllItemsFilter new;
 		itemName: #niceClassName;
 		previewElement: [ :aStencil | BlElement new ];
