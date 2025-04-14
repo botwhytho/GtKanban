@@ -43,22 +43,6 @@ LeKanbanBoardPageType >> addHistorySnippet [
 			self page addSnippet: jsonSnippet ]
 ]
 
-{ #category : #converting }
-LeKanbanBoardPageType >> asLepiterPagePhlowTool [
-	^ GtPhlowCompositeTool new
-		name: self page title;
-		addTool: (GtPhlowExplicitTool new withLabelAptitude
-				name: 'Kanban';
-				stencil: [ BrFrame new
-						matchParent;
-						margin: (BlInsets all: 20);
-						addChild: (self gtKanbanFor: GtPhlowView empty) asElement ]);
-		addTool: (GtPhlowExplicitTool new withLabelAptitude
-				name: 'Views';
-				stencil: [ (GtPhlowTool default object: self) asElement ]);
-		addTool: (GtPhlowTool default object: self page)
-]
-
 { #category : #views }
 LeKanbanBoardPageType >> createLists: aBoard [
 	| lists handler listElements |
@@ -82,6 +66,18 @@ LeKanbanBoardPageType >> createLists: aBoard [
 						kanbanCardElementFromSnippet: aSnippet
 						inList: list
 						withHandler: handler ] ]
+]
+
+{ #category : #converting }
+LeKanbanBoardPageType >> defaultPhlowTool [
+	self flag: #TODO.	"Use a kanban board icon"
+	^ GtPhlowExplicitTool new withIconAptitude
+		name: self page title;
+		icon: BrGlamorousVectorIcons note;
+		stencil: [ BrFrame new
+				matchParent;
+				margin: (BlInsets all: 20);
+				addChild: (self gtKanbanFor: GtPhlowView empty) asElement ]
 ]
 
 { #category : #views }

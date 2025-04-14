@@ -16,6 +16,10 @@ The best approach for creating a new custom page type is to copy {{gtClass:LeExa
 - {{gtMethod:LeExampleCustomPageType class>>#leJsonV4Name}}: needs a unique name for lepiter JSON serialization
 
 - {{gtMethod:LeExampleCustomPageType>>#printOn:}} controls how your class is displayed, should override or you might think a page has been defined with the incorrect page type as it will display the superclass 'Named Page:' string
+
+- Finally,  {{gtMethod:LeExampleCustomPageType>>defaultPhlowTool}}:  can be overriden to display the custom page type in a different graphical format. Custom page types will have a 'composite' tool with the default tool as the first/main tool. Two different inspectors will also show up, one for the page type class, and one for the Lepiter page itself. One can add custom views on the page type that will not appear on arbitrary Lepiter pages, only pages of the specific page type.
+
+- If one wants to completely override the phlow/composite tools displayed and not include the page type and page inspectors, or do any other more advanced custom logic, one can instead override {{gtMethod:LePageType>>asLepiterPagePhlowTool}} on their own class for added flexibility.
 "
 Class {
 	#name : #LeExampleCustomPageType,
@@ -51,17 +55,14 @@ LeExampleCustomPageType class >> niceClassName [
 ]
 
 { #category : #converting }
-LeExampleCustomPageType >> asLepiterPagePhlowTool [
-	^ GtPhlowCompositeTool new
+LeExampleCustomPageType >> defaultPhlowTool [
+	^ GtPhlowExplicitTool new withIconAptitude
 		name: self page title;
-		addTool: (GtPhlowExplicitTool new withIconAptitude
-				icon: BrGlamorousVectorIcons gt;
-				stencil: [ BrFrame new matchParent addChild: ((BrGlamorousVectorIcons perform: #largeGt) create
-						asScalableElement);
-						when: BlClickEvent
-							do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]);
-		addTool: (GtPhlowTool default object: self);
-		addTool: (GtPhlowTool default object: self page)
+		icon: BrGlamorousVectorIcons gt;
+		stencil: [ BrFrame new matchParent
+				addChild: (BrGlamorousVectorIcons perform: #largeGt) create asScalableElement;
+				when: BlClickEvent
+					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
 ]
 
 { #category : #printing }
