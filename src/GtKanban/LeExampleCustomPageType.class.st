@@ -54,6 +54,11 @@ LeExampleCustomPageType class >> niceClassName [
 	^ 'Example Custom Page'
 ]
 
+{ #category : #'ui\t' }
+LeExampleCustomPageType >> asPreviewElement [
+	^ self defaultPhlowTool asElement
+]
+
 { #category : #converting }
 LeExampleCustomPageType >> defaultPhlowTool [
 	^ GtPhlowExplicitTool new withIconAptitude

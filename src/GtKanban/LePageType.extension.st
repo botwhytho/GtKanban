@@ -17,6 +17,14 @@ LePageType >> asLepiterPagePhlowTool [
 ]
 
 { #category : #'*GtKanban' }
+LePageType >> asPreviewElement [
+	^ LePageToolContentTreeElement new
+		withTitleOnly;
+		pageViewModel: self page asContentUIModel;
+		matchParent
+]
+
+{ #category : #'*GtKanban' }
 LePageType >> defaultPhlowTool [
 	^ LePagePhlowTool new
 		shouldFocusFirstSnippet: true;
