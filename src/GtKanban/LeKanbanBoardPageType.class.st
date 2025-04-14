@@ -65,7 +65,8 @@ LeKanbanBoardPageType >> createLists: aBoard [
 					self
 						kanbanCardElementFromSnippet: aSnippet
 						inList: list
-						withHandler: handler ] ]
+						withHandler: handler ] ].
+	(aBoard query // BrEditableLabel) result anyOne requestFocus
 ]
 
 { #category : #converting }
@@ -160,6 +161,7 @@ LeKanbanBoardPageType >> kanbanCardElementFromSnippet: aSnippet inList: aList wi
 		margin: (BlInsets all: 2);
 		addChildren: {BrEditableLabel new
 					aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
+					addAptitude: (BrKeyboardFocusChangeAptitude new rootValuable: [:_ | aHandler container ] );
 					padding: (BlInsets all: 2);
 					text: aSnippet string asRopedText;
 					when: BrEditorAcceptWish
@@ -236,6 +238,7 @@ LeKanbanBoardPageType >> kanbanListElementFromSnippet: aListSnippet withHandler:
 					margin: (BlInsets all: 2);
 					addChildren: {BrEditableLabel new
 								aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize;
+								addAptitude: (BrKeyboardFocusChangeAptitude new rootValuable: [:_ | aHandler container ] );
 								margin: (BlInsets all: 5);
 								text: aListSnippet string asRopedText;
 								when: BrEditorAcceptWish

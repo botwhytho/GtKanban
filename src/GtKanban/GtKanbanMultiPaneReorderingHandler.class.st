@@ -14,6 +14,11 @@ GtKanbanMultiPaneReorderingHandler >> addPane: aPane [
 ]
 
 { #category : #accessing }
+GtKanbanMultiPaneReorderingHandler >> container [
+	^ container
+]
+
+{ #category : #accessing }
 GtKanbanMultiPaneReorderingHandler >> container: theContainer [
 	container := theContainer
 ]
