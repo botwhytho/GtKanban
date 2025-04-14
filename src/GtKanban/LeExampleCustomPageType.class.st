@@ -66,7 +66,7 @@ LeExampleCustomPageType >> defaultPhlowTool [
 		icon: BrGlamorousVectorIcons gt;
 		stencil: [ BrFrame new matchParent
 				addChild: (BrGlamorousVectorIcons perform: #largeGt) create asScalableElement;
-				when: BlClickEvent
+				when: BlDoubleClickEvent
 					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
 ]
 
