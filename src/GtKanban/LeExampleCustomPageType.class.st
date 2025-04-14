@@ -54,6 +54,17 @@ LeExampleCustomPageType class >> niceClassName [
 	^ 'Example Custom Page'
 ]
 
+{ #category : #example }
+LeExampleCustomPageType class >> samplePage [
+	| page |
+	page := LePage new.
+	page
+		type: (LeExampleCustomPageType new
+				title: 'Testing';
+				page: page).
+	^ page
+]
+
 { #category : #'ui\t' }
 LeExampleCustomPageType >> asPreviewElement [
 	^ self defaultPhlowTool asElement
@@ -76,4 +87,16 @@ LeExampleCustomPageType >> printOn: aStream [
 	aStream 
 		nextPutAll: 'Example Custom Page: ';
 		print: title
+]
+
+{ #category : #example }
+LeExampleCustomPageType >> samplePage [
+	<gtExample>
+	| aPage |
+	aPage := LePage new.
+	aPage
+		type: (LeExampleCustomPageType new
+				title: 'Testing';
+				page: aPage).
+	^ aPage
 ]
