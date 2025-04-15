@@ -9,9 +9,9 @@ LeExampleCustomPageTypeExamples >> databaseWithSamplePage [
 	<gtExample>
 	| database |
 	database := LeDatabaseWithLocalMonitorExamples new databaseWithMonitor.
-	"database monitor
-		storage: (LeMockLocalJsonV4StorageWithMissingSerializers new
-				removeSerializers: {LeExampleCustomPageType})."
+	database monitor
+		storage: (LeMockLocalJsonV4StorageWithMissingDeserializers new
+				removeDeserializers: {LeExampleCustomPageType}).
 	database addPage: LeExampleCustomPageType samplePage.
 	self assert: database pages size = 1.
 	^ database
@@ -22,7 +22,9 @@ LeExampleCustomPageTypeExamples >> deregisterCustomPageTypeAndReloadDatabase [
 	<gtExample>
 	| database |
 	database := self databaseWithSamplePage.
-"	database pagesByType removeKey: LeExampleCustomPageType."
+	(database pagesByType at: LeExampleCustomPageType) removeAll.
+	(database instVarNamed: #pagesByUuid) removeAll.
 	database reload.
+	database monitor reloadPage: database pages first.
 	^ database
 ]
