@@ -32,6 +32,16 @@ LePageType >> defaultPhlowTool [
 ]
 
 { #category : #'*GtKanban' }
+LePageType class >> defaultSystemPageTypes [
+	^ {LeDailyNotePageType.
+		LeNamedPageType.
+		LePharoClassCommentPageType.
+		LePharoClassPageType.
+		LeProxyClassPageType.
+		LeUnnamedPageType}
+]
+
+{ #category : #'*GtKanban' }
 LePageType class >> initialize [
 	super initialize.
 	self = LePageType
