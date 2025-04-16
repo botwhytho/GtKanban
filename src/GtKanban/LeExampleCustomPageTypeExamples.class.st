@@ -22,9 +22,9 @@ LeExampleCustomPageTypeExamples >> deregisterCustomPageTypeAndReloadDatabase [
 	<gtExample>
 	| database |
 	database := self databaseWithSamplePage.
-	(database pagesByType at: LeExampleCustomPageType) removeAll.
-	(database instVarNamed: #pagesByUuid) removeAll.
-	database reload.
 	database monitor reloadPage: database pages first.
+	self
+		assert: (database pages first type isKindOf: LeUnknownNamedPageType)
+		description: 'A page with a title and an unknown page type most be loaded into the database as a page with type `LeUnknownNamedPageType`'.
 	^ database
 ]

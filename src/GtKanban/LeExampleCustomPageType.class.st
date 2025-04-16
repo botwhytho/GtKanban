@@ -24,7 +24,7 @@ The best approach for creating a new custom page type is to copy {{gtClass:LeExa
 Class {
 	#name : #LeExampleCustomPageType,
 	#superclass : #LeNamedPageType,
-	#category : #GtKanban
+	#category : #'GtKanban-Model'
 }
 
 { #category : #initialization }

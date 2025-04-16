@@ -11,14 +11,16 @@ Class {
 LeMockLocalJsonV4StorageWithMissingDeserializers >> loadFromFile: aFileReference [
 	| aReader originalException result |
 	aReader := LeJsonV4 new newReader.
-	self removeDeserializers do: [ :each | aReader mappings removeKey: each ].
+	self removeDeserializers
+		do: [ :each | 
+			aReader mappings removeKey: each.
+			(aReader instVarNamed: #typeMap) removeKey: each leJsonV4Name ].
 	result := [ aFileReference
 			readStreamDo: [ :aStream | 
 				| object |
 				object := aReader
 						on: aStream;
-						next.
-			"If the deserialised object is a Dictionary, the __schema should be removed"
+						next.	"If the deserialised object is a Dictionary, the __schema should be removed"
 				object isDictionary ifTrue: [ object removeKey: '__schema' ifAbsent: [  ] ].
 				object ] ]
 			on: NeoJSONParseError
