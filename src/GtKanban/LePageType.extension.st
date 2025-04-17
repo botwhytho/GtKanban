@@ -38,7 +38,9 @@ LePageType class >> defaultSystemPageTypes [
 		LePharoClassCommentPageType.
 		LePharoClassPageType.
 		LeProxyClassPageType.
-		LeUnnamedPageType}
+		LeUnnamedPageType.
+		LeUnknownNamedPageType.
+		LeUnknownUnnamedPageType}
 ]
 
 { #category : #'*GtKanban' }

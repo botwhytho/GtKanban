@@ -1,6 +1,23 @@
 Extension { #name : #LeDatabase }
 
 { #category : #'*GtKanban' }
+LeDatabase >> detachPageButKeepFile: aPage [
+
+	"I detach the page from the give database. The page could remain deleted or be later added to
+	another database."
+
+	self assertNotReadOnly.
+
+	(pagesByType at: aPage pageTypeClass)
+		removeKey: aPage databaseKey
+		ifAbsent: [ "do nothing" ].
+	pagesByUuid removeKey: aPage uid ifAbsent: [ "do nothing" ].
+
+	aPage removedFromDatabase: self.
+	self updateSortedCollectionsDueToRemoval: aPage.
+]
+
+{ #category : #'*GtKanban' }
 LeDatabase >> initialize [
 	super initialize.
 	readOnly := false.

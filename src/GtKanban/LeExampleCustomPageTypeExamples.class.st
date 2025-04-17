@@ -20,15 +20,26 @@ LeExampleCustomPageTypeExamples >> databaseWithSamplePage [
 { #category : #example }
 LeExampleCustomPageTypeExamples >> deregisterCustomPageTypeAndReloadPage [
 	<gtExample>
-	| database exception |
+	| database leJsonV4 reader |
 	database := self reloadPage.
-	database monitor storage leJsonV4 disableDeserializers.
-	[database monitor reloadPage: database pages first] on: LeDBLoadError do: [ :ex | exception := ex].
-	self assert: exception isNotNil.
-	self flag: #TODO. "Remove above error handling"
+	leJsonV4 := database monitor storage leJsonV4.
+	leJsonV4 disableDeserializers.
+	reader := leJsonV4 newReader.
+	self assert: (reader mappings keys includes: LeExampleCustomPageType) not.
+	database detachPageButKeepFile: database pages first.
+	database monitor reload.
 	self
-		assert: (database pages first type isKindOf: LeExampleCustomPageType"LeUnknownNamedPageType")
+		assert: (database pages first type isKindOf: LeUnknownNamedPageType)
 		description: 'A page with a title and an unknown page type most be loaded into the database as a page with type `LeUnknownNamedPageType`'.
+	^ database
+]
+
+{ #category : #example }
+LeExampleCustomPageTypeExamples >> modifyUnknownPage [
+	<gtExample>
+	| database |
+	database := self deregisterCustomPageTypeAndReloadPage.
+	database pages first addSnippet: (LeTextSnippet string: 'Testing').
 	^ database
 ]
 
@@ -37,7 +48,26 @@ LeExampleCustomPageTypeExamples >> reloadPage [
 	<gtExample>
 	| database |
 	database := self databaseWithSamplePage.
-	database monitor reloadPage: database pages first.
+	database detachPageButKeepFile: database pages first.
+	database monitor reload.
 	self assert: (database pages first type isKindOf: LeExampleCustomPageType).
+	^ database
+]
+
+{ #category : #example }
+LeExampleCustomPageTypeExamples >> reregisterCustomPageTypeAndReloadPage [
+	<gtExample>
+	| database leJsonV4 reader |
+	database := self modifyUnknownPage.
+	leJsonV4 := database monitor storage leJsonV4.
+	leJsonV4 enableDeserializers.
+	reader := leJsonV4 newReader.
+	self assert: (reader mappings keys includes: LeExampleCustomPageType).
+	database detachPageButKeepFile: database pages first.
+	database monitor reload.
+	self flag: #TODO. "Check page hash optimization. unknown page types should be excluded and tried to be reloaded."
+	self
+		assert: (database pages first type isKindOf: LeExampleCustomPageType)
+		description: 'If code that handles custom page types is loaded and database reloaded, page should get reloaded as the correct page type.'.
 	^ database
 ]
