@@ -2,10 +2,25 @@ Trait {
 	#name : #TLeUnknownPageType,
 	#instVars : [
 		'pageType',
-		'additionalFields'
+		'additionalFields',
+		'pageTypeRepo'
 	],
 	#category : #'GtKanban-Traits'
 }
+
+{ #category : #jsonV4 }
+TLeUnknownPageType classSide >> leJsonV4AttributeMapping [
+	^ super leJsonV4AttributeMapping
+		add: #pageTypeRepo -> #pageTypeRepo;
+		add: #pageType -> #'__type';
+		yourself
+]
+
+{ #category : #jsonV4 }
+TLeUnknownPageType classSide >> leJsonV4MappingFor: aNeoJSONMapper [
+	self flag: #TODO. "pass through additional fields"
+	aNeoJSONMapper for: self do: [ :mapping | self leJsonV4AddMappingsTo: mapping ]
+]
 
 { #category : #accessing }
 TLeUnknownPageType >> additionalFields [
@@ -23,7 +38,7 @@ TLeUnknownPageType >> asLepiterPagePhlowTool [
 		addTool: self defaultPhlowTool;
 		addTool: (GtPhlowExplicitTool new withLabelAndIconAptitude
 				icon: BrGlamorousVectorIcons debug;
-				name: 'Unknown (' , self pageType asString , ')Page Type';
+				name: 'Unknown (' , self pageType asString , ') Page Type';
 				stencil: [ (GtPhlowTool default object: self) asElement ]);
 		addTool: (GtPhlowExplicitTool new withLabelAndIconAptitude
 				icon: BrGlamorousVectorIcons inspect;
@@ -39,4 +54,9 @@ TLeUnknownPageType >> pageType [
 { #category : #accessing }
 TLeUnknownPageType >> pageType: anObject [
 	pageType := anObject
+]
+
+{ #category : #accessing }
+TLeUnknownPageType >> pageTypeRepo [
+	^ pageTypeRepo
 ]

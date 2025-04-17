@@ -339,6 +339,11 @@ LeKanbanBoardPageType >> onAddedToSceneGraphEvent: anEvent [
 	self createLists: anEvent currentTarget
 ]
 
+{ #category : #initialization }
+LeKanbanBoardPageType >> pageTypeRepo [
+	^ 'https://github.com/botwhytho/GtKanban'
+]
+
 { #category : #printing }
 LeKanbanBoardPageType >> printOn: aStream [
 

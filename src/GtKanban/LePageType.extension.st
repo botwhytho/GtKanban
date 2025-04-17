@@ -38,7 +38,15 @@ LePageType class >> defaultSystemPageTypes [
 		LePharoClassCommentPageType.
 		LePharoClassPageType.
 		LeProxyClassPageType.
-		LeUnnamedPageType}
+		LeUnnamedPageType.
+		LeUnknownNamedPageType.
+		LeUnknownUnnamedPageType}
+]
+
+{ #category : #'*GtKanban' }
+LePageType >> initialize [
+super initialize.
+self pageTypeRepo
 ]
 
 { #category : #'*GtKanban' }
@@ -49,4 +57,17 @@ LePageType class >> initialize [
 			self leJsonV4MappingFor: LeJsonV4 uniqueInstance newReader.
 			LeDatabasesRegistry defaultLogicalDatabase databases
 				do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ] ]
+]
+
+{ #category : #'*GtKanban' }
+LePageType >> pageTypeRepo [
+	"Return a URL where one can get more details about downloading the code needed to support this page type"
+
+	(self class defaultSystemPageTypes includes: self class)
+		ifFalse: [ self shouldBeImplemented ]
+]
+
+{ #category : #'*GtKanban' }
+LePageType >> pageTypeRepo: anObject [
+	pageTypeRepo := anObject
 ]

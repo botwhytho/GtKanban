@@ -24,6 +24,9 @@ The best approach for creating a new custom page type is to copy {{gtClass:LeExa
 Class {
 	#name : #LeExampleCustomPageType,
 	#superclass : #LeNamedPageType,
+	#instVars : [
+		'theAnswer'
+	],
 	#category : #'GtKanban-Model'
 }
 
@@ -37,10 +40,26 @@ LeExampleCustomPageType class >> initialize [
 		do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+LeExampleCustomPageType class >> leJsonV3AttributeMapping [
+
+	^ super leJsonV3AttributeMapping
+		add: #theAnswer -> #theAnswer;
+		yourself
+]
+
 { #category : #accesing }
 LeExampleCustomPageType class >> leJsonV3Name [
 
 	^ 'exampleCustomPage'
+]
+
+{ #category : #'as yet unclassified' }
+LeExampleCustomPageType class >> leJsonV4AttributeMapping [
+
+	^ super leJsonV4AttributeMapping
+		add: #theAnswer -> #theAnswer;
+		yourself
 ]
 
 { #category : #accesing }
@@ -61,7 +80,8 @@ LeExampleCustomPageType class >> samplePage [
 	page
 		type: (LeExampleCustomPageType new
 				title: 'Testing';
-				page: page).
+				page: page;
+				theAnswer: 42).
 	^ page
 ]
 
@@ -79,6 +99,11 @@ LeExampleCustomPageType >> defaultPhlowTool [
 				addChild: (BrGlamorousVectorIcons perform: #largeGt) create asScalableElement;
 				when: BlDoubleClickEvent
 					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
+]
+
+{ #category : #'as yet unclassified' }
+LeExampleCustomPageType >> pageTypeRepo [
+	^ 'https://github.com/feenkcom/lepiter'
 ]
 
 { #category : #printing }
@@ -99,4 +124,14 @@ LeExampleCustomPageType >> samplePage [
 				title: 'Testing';
 				page: aPage).
 	^ aPage
+]
+
+{ #category : #accessing }
+LeExampleCustomPageType >> theAnswer [
+	^ theAnswer
+]
+
+{ #category : #accessing }
+LeExampleCustomPageType >> theAnswer: anObject [
+	theAnswer := anObject
 ]

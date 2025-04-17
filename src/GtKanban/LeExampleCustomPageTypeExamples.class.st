@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #example }
-LeExampleCustomPageTypeExamples >> databaseWithSamplePage [
+LeExampleCustomPageTypeExamples >> databaseWithExampleCustomPage [
 	<gtExample>
 	| database |
 	database := LeDatabaseWithLocalMonitorExamples new databaseWithMonitor.
@@ -35,19 +35,10 @@ LeExampleCustomPageTypeExamples >> deregisterCustomPageTypeAndReloadPage [
 ]
 
 { #category : #example }
-LeExampleCustomPageTypeExamples >> modifyUnknownPage [
-	<gtExample>
-	| database |
-	database := self deregisterCustomPageTypeAndReloadPage.
-	database pages first addSnippet: (LeTextSnippet string: 'Testing').
-	^ database
-]
-
-{ #category : #example }
 LeExampleCustomPageTypeExamples >> reloadPage [
 	<gtExample>
 	| database |
-	database := self databaseWithSamplePage.
+	database := self databaseWithExampleCustomPage.
 	database detachPageButKeepFile: database pages first.
 	database monitor reload.
 	self assert: (database pages first type isKindOf: LeExampleCustomPageType).
@@ -58,7 +49,7 @@ LeExampleCustomPageTypeExamples >> reloadPage [
 LeExampleCustomPageTypeExamples >> reregisterCustomPageTypeAndReloadPage [
 	<gtExample>
 	| database leJsonV4 reader |
-	database := self modifyUnknownPage.
+	database := self deregisterCustomPageTypeAndReloadPage.
 	leJsonV4 := database monitor storage leJsonV4.
 	leJsonV4 enableDeserializers.
 	reader := leJsonV4 newReader.
