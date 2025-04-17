@@ -52,7 +52,11 @@ self pageTypeRepo
 { #category : #'*GtKanban' }
 LePageType class >> initialize [
 	super initialize.
+	self flag: #HACK.	"Can't have 'extension' slots on a class, so need to programatically create here until I move code to correct packages"
 	self = LePageType
+		ifTrue: [ [ self slotNamed: #pageTypeRepo ]
+				on: SlotNotFound
+				do: [ self addSlot: #pageTypeRepo ] ]
 		ifFalse: [ self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter.
 			self leJsonV4MappingFor: LeJsonV4 uniqueInstance newReader.
 			LeDatabasesRegistry defaultLogicalDatabase databases
