@@ -1,6 +1,11 @@
 Extension { #name : #LeLocalJsonV4Storage }
 
 { #category : #'*GtKanban' }
+LeLocalJsonV4Storage >> leJsonV4 [
+	^ LeJsonV4 uniqueInstance
+]
+
+{ #category : #'*GtKanban' }
 LeLocalJsonV4Storage >> loadFromFile: aFileReference [
 	| originalException result |
 	result := [ aFileReference
