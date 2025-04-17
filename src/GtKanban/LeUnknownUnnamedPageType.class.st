@@ -1,6 +1,8 @@
 Class {
 	#name : #LeUnknownUnnamedPageType,
 	#superclass : #LeUnnamedPageType,
+	#traits : 'TLeUnknownPageType',
+	#classTraits : 'TLeUnknownPageType classTrait',
 	#category : #'GtKanban-Model'
 }
 

@@ -1,9 +1,8 @@
 Class {
 	#name : #LeUnknownNamedPageType,
 	#superclass : #LeNamedPageType,
-	#instVars : [
-		'pageType'
-	],
+	#traits : 'TLeUnknownPageType',
+	#classTraits : 'TLeUnknownPageType classTrait',
 	#category : #'GtKanban-Model'
 }
 
@@ -37,16 +36,6 @@ LeUnknownNamedPageType class >> niceClassName [
 { #category : #ui }
 LeUnknownNamedPageType >> asPreviewElement [
 	^ self defaultPhlowTool asElement
-]
-
-{ #category : #accessing }
-LeUnknownNamedPageType >> pageType [
-	^ pageType
-]
-
-{ #category : #accessing }
-LeUnknownNamedPageType >> pageType: anObject [
-	pageType := anObject
 ]
 
 { #category : #printing }

@@ -28,7 +28,7 @@ LePageType >> asPreviewElement [
 LePageType >> defaultPhlowTool [
 	^ LePagePhlowTool new
 		shouldFocusFirstSnippet: true;
-		page: self
+		page: self page
 ]
 
 { #category : #'*GtKanban' }
@@ -38,9 +38,7 @@ LePageType class >> defaultSystemPageTypes [
 		LePharoClassCommentPageType.
 		LePharoClassPageType.
 		LeProxyClassPageType.
-		LeUnnamedPageType.
-		LeUnknownNamedPageType.
-		LeUnknownUnnamedPageType}
+		LeUnnamedPageType}
 ]
 
 { #category : #'*GtKanban' }
