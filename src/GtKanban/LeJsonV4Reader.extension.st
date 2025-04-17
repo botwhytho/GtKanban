@@ -5,9 +5,9 @@ LeJsonV4Reader >> object: type from: map [
 	^ typeMap
 		at: type
 		ifPresent: [ :cls | cls leFromJsonV4Dictionary: map ]
-		ifAbsent: [ [ self unknownPageTypeFrom: map ]
+		ifAbsent: [ [ self unknownSnippetTypeFrom: map ]
 				on: NeoJSONParseError
-				do: [ self unknownSnippetTypeFrom: map ] ]
+				do: [ self unknownPageTypeFrom: map ] ]
 ]
 
 { #category : #'*GtKanban' }
