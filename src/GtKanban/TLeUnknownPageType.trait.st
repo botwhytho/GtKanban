@@ -18,8 +18,20 @@ TLeUnknownPageType classSide >> leJsonV4AttributeMapping [
 
 { #category : #jsonV4 }
 TLeUnknownPageType classSide >> leJsonV4MappingFor: aNeoJSONMapper [
-	self flag: #TODO. "pass through additional fields"
-	aNeoJSONMapper for: self do: [ :mapping | self leJsonV4AddMappingsTo: mapping ]
+	aNeoJSONMapper
+		for: self
+		do: [ :mapping | 
+			mapping
+				mapProperty: #additionalFields
+				getter: #yourself
+				setter: [ :object :value | 
+					value
+						, (mapping
+								associationsSelect: [ :each | 
+									((self leJsonV4AttributeMapping collect: #value) , #additionalFields
+										includes: each key) not ]) ].
+
+			self leJsonV4AddMappingsTo: mapping ]
 ]
 
 { #category : #accessing }
