@@ -22,6 +22,9 @@ TLeUnknownPageType classSide >> leFromJsonV4Dictionary: aDictionary [
 	aDictionary
 		at: #additionalFields
 		ifPresent: [ :aValue | anUnknownPageType additionalFields addAll: aValue ].
+	aDictionary
+		at: #title
+		ifPresent: [ :aValue | anUnknownPageType title: '*UNKNOWN* | ' ,aValue ].
 	^ anUnknownPageType
 ]
 
@@ -49,7 +52,10 @@ TLeUnknownPageType classSide >> leJsonV4MappingFor: aNeoJSONMapper [
 								put: (anUnknownPageType perform: attributeMap key) ].
 					anUnknownPageType additionalFields
 						ifNotNil: [ :notNil | aDictionary addAll: notNil ].
-					aDictionary ] ]
+					aDictionary
+						at: #title
+						ifPresent: [ :aValue | aDictionary at: #title put: (aValue copyReplaceAll: '*UNKNOWN* | ' with: '') ].
+								aDictionary ] ]
 ]
 
 { #category : #accessing }
