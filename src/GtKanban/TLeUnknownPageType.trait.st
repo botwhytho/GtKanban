@@ -9,6 +9,23 @@ Trait {
 }
 
 { #category : #jsonV4 }
+TLeUnknownPageType classSide >> leFromJsonV4Dictionary: aDictionary [
+	"Create a new instance of the receiver from the supplied dictionary.
+	Store additional fields in the slot named as such."
+
+	| anUnknownPageType knownMapKeys |
+	anUnknownPageType := super leFromJsonV4Dictionary: aDictionary.
+	knownMapKeys := self leJsonV4AttributeMapping collect: #value.
+	anUnknownPageType
+		additionalFields: (aDictionary
+				associationsSelect: [ :each | (knownMapKeys includes: each key) not ]).
+	aDictionary
+		at: #additionalFields
+		ifPresent: [ :aValue | anUnknownPageType additionalFields addAll: aValue ].
+	^ anUnknownPageType
+]
+
+{ #category : #jsonV4 }
 TLeUnknownPageType classSide >> leJsonV4AttributeMapping [
 	^ super leJsonV4AttributeMapping
 		add: #pageTypeRepo -> #pageTypeRepo;
@@ -18,20 +35,7 @@ TLeUnknownPageType classSide >> leJsonV4AttributeMapping [
 
 { #category : #jsonV4 }
 TLeUnknownPageType classSide >> leJsonV4MappingFor: aNeoJSONMapper [
-	aNeoJSONMapper
-		for: self
-		do: [ :mapping | 
-			mapping
-				mapProperty: #additionalFields
-				getter: #yourself
-				setter: [ :object :value | 
-					value
-						, (mapping
-								associationsSelect: [ :each | 
-									((self leJsonV4AttributeMapping collect: #value) , #additionalFields
-										includes: each key) not ]) ].
-
-			self leJsonV4AddMappingsTo: mapping ]
+	aNeoJSONMapper for: self do: [ :mapping | self leJsonV4AddMappingsTo: mapping ]
 ]
 
 { #category : #accessing }
