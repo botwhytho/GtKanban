@@ -131,7 +131,7 @@ LeSlideshowPageType >> slidesCreator [
 									+ (BrGlamorousButtonExteriorAptitude new
 											backgroundPaint: Color white;
 											borderPaint: Color transparent);
-							addEventHandler: GTSlideReorderingHandler new;
+							addEventHandler: BlReorderingHandler new;
 							constraintsDo: [ :c | 
 								c vertical fitContent.
 								c horizontal matchParent ] ]).
