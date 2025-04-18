@@ -11,7 +11,9 @@ The best approach for creating a new custom page type is to copy {{gtClass:LeExa
 
 - {{gtMethod:LeExampleCustomPageType class>>#leJsonV4Name}}: needs a unique name for lepiter JSON serialization
 
-- {{gtMethod:LeExampleCustomPageType>>#printOn:}} controls how your class is displayed, should override or you might think a page has been defined with the incorrect page type as it will display the superclass 'Named Page:' string
+- {{gtMethod:LeExampleCustomPageType>>#printOn:}} controls how your class is displayed, should override or you might think a page has been defined with the incorrect page type as it will display the superclass 'Named Page:' string.
+
+- {{gtMethod:LeExampleCustomPageType>>samplePage}} should be overriden and have an example page to potentially help users understand how to use the custom page type.
 
 - Finally,  {{gtMethod:LeExampleCustomPageType>>defaultPhlowTool}}:  can be overriden to display the custom page type in a different graphical format. Custom page types will have a 'composite' tool with the default tool as the first/main tool. Two different inspectors will also show up, one for the page type class, and one for the Lepiter page itself. One can add custom views on the page type that will not appear on arbitrary Lepiter pages, only pages of the specific page type.
 
