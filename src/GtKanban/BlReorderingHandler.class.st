@@ -78,9 +78,9 @@ BlReorderingHandler >> dragEndEvent: anEvent [
 	| draggable |
 	draggable := anEvent currentTarget.
 	overlay removeChild: draggable.
-	draggable constraints: originalConstraints.
 	parent replaceChild: placeholder with: draggable.
 	overlay detach.
+	draggable constraints: originalConstraints.
 
 	anEvent currentTarget dispatchEvent: BlPullEndEvent new.
 	parent dispatchEvent: (BlChildOrderingPotentiallyChangedEvent parent: parent)
@@ -130,7 +130,7 @@ BlReorderingHandler >> dragStartEvent: anEvent [
 
 	"element position in parent"
 	originalPosition := draggable position.
-	originalConstraints := draggable constraints deepCopy.
+	originalConstraints := draggable constraints veryDeepCopy.
 	placeholder := self placeholderFor: draggable.
 	parent replaceChild: draggable with: placeholder.
 	overlay addChild: draggable.
