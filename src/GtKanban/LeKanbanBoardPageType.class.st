@@ -341,7 +341,8 @@ LeKanbanBoardPageType >> onAddedToSceneGraphEvent: anEvent [
 
 { #category : #initialization }
 LeKanbanBoardPageType >> pageTypeRepo [
-	^ 'https://github.com/botwhytho/GtKanban'
+	^ pageTypeRepo
+		ifNil: [ pageTypeRepo := 'https://github.com/botwhytho/GtKanban' ]
 ]
 
 { #category : #printing }

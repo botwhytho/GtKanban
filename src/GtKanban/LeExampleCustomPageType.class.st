@@ -101,9 +101,9 @@ LeExampleCustomPageType >> defaultPhlowTool [
 					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 LeExampleCustomPageType >> pageTypeRepo [
-	^ 'https://github.com/feenkcom/lepiter'
+	^ pageTypeRepo ifNil: [ pageTypeRepo := 'https://github.com/feenkcom/lepiter' ]
 ]
 
 { #category : #printing }
