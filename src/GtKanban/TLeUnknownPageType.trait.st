@@ -41,7 +41,7 @@ TLeUnknownPageType classSide >> leJsonV4MappingFor: aNeoJSONMapper [
 			aNeoJSONCustomMapping
 				encoder: [ :anUnknownPageType | 
 					| aDictionary |
-					aDictionary := GtStringContentDictionary.
+					aDictionary := GtStringContentDictionary new.
 					self leJsonV4AttributeMapping
 						do: [ :attributeMap | 
 							aDictionary
