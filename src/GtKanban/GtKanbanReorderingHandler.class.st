@@ -150,21 +150,21 @@ GtKanbanReorderingHandler >> inplaceSorting [
 	<gtExample>
 	| pane |
 	pane := BlElement new
-		size: 700 @ 600;
-		layout: BlFlowLayout new;
-		border: (BlBorder paint: Color black);
-		padding: (BlInsets all: 5)
-		yourself.
-	10 timesRepeat: [ |element|
-	element := BlElement new
-		size: 150 @ 100;
-		border: (BlBorder paint: Color black);
-		background: Color random;
-		margin: (BlInsets all: 5);
-		addEventHandler: DTReorderingHandler new;
-		yourself.
-	pane addChild: element].
-^pane
+			size: 700 @ 600;
+			layout: BlFlowLayout new;
+			border: (BlBorder paint: Color black);
+			padding: (BlInsets all: 5) yourself.
+	10
+		timesRepeat: [ | element |
+			element := BlElement new
+					size: 150 @ 100;
+					border: (BlBorder paint: Color black);
+					background: Color random;
+					margin: (BlInsets all: 5);
+					addEventHandler: GtKanbanReorderingHandler new;
+					yourself.
+			pane addChild: element ].
+	^ pane
 ]
 
 { #category : #'event handling' }
