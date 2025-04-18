@@ -17,12 +17,6 @@ LeUnknownNamedPageType class >> initialize [
 ]
 
 { #category : #accesing }
-LeUnknownNamedPageType class >> leJsonV3Name [
-
-	^ 'unknownNamedCustomPage'
-]
-
-{ #category : #accesing }
 LeUnknownNamedPageType class >> leJsonV4Name [
 
 	^ 'unknownNamedCustomPage'

@@ -15,12 +15,6 @@ LeKanbanBoardPageType class >> initialize [
 ]
 
 { #category : #accesing }
-LeKanbanBoardPageType class >> leJsonV3Name [
-
-	^ 'kanbanBoardPage'
-]
-
-{ #category : #accesing }
 LeKanbanBoardPageType class >> leJsonV4Name [
 
 	^ 'kanbanBoardPage'

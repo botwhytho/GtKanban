@@ -7,11 +7,7 @@ The best approach for creating a new custom page type is to copy {{gtClass:LeExa
 
 - {{gtMethod:LeExampleCustomPageType>>#printOn:}} controls how your class is displayed, should override or you might think a page has been defined with the incorrect page type as it will display the superclass 'Named Page:' string
 
-- {{gtMethod:LeExampleCustomPageType class>>#leJsonV3Name}}: needs a unique name for lepiter JSON serialization
-
 - {{gtMethod:LeExampleCustomPageType class>>#niceClassName}}: this is a 'nice' human readable name of your page type, something like 'Something Page'. This will come up in the global spotter to be able to create a new page of your custom type.
-
-- {{gtMethod:LeExampleCustomPageType class>>#leJsonV3Name}}: needs a unique name for lepiter JSON serialization
 
 - {{gtMethod:LeExampleCustomPageType class>>#leJsonV4Name}}: needs a unique name for lepiter JSON serialization
 
@@ -38,20 +34,6 @@ LeExampleCustomPageType class >> initialize [
 	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newReader.
 	LeDatabasesRegistry defaultLogicalDatabase databases
 		do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ]
-]
-
-{ #category : #'as yet unclassified' }
-LeExampleCustomPageType class >> leJsonV3AttributeMapping [
-
-	^ super leJsonV3AttributeMapping
-		add: #theAnswer -> #theAnswer;
-		yourself
-]
-
-{ #category : #accesing }
-LeExampleCustomPageType class >> leJsonV3Name [
-
-	^ 'exampleCustomPage'
 ]
 
 { #category : #'as yet unclassified' }
