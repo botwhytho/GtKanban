@@ -35,7 +35,21 @@ TLeUnknownPageType classSide >> leJsonV4AttributeMapping [
 
 { #category : #jsonV4 }
 TLeUnknownPageType classSide >> leJsonV4MappingFor: aNeoJSONMapper [
-	aNeoJSONMapper for: self do: [ :mapping | self leJsonV4AddMappingsTo: mapping ]
+	aNeoJSONMapper
+		for: self
+		customDo: [ :aNeoJSONCustomMapping | 
+			aNeoJSONCustomMapping
+				encoder: [ :anUnknownPageType | 
+					| aDictionary |
+					aDictionary := GtStringContentDictionary.
+					self leJsonV4AttributeMapping
+						do: [ :attributeMap | 
+							aDictionary
+								at: attributeMap value
+								put: (anUnknownPageType perform: attributeMap key) ].
+					anUnknownPageType additionalFields
+						ifNotNil: [ :notNil | aDictionary addAll: notNil ].
+					aDictionary ] ]
 ]
 
 { #category : #accessing }
