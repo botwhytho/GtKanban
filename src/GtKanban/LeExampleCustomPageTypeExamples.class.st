@@ -35,6 +35,21 @@ LeExampleCustomPageTypeExamples >> deregisterCustomPageTypeAndReloadPage [
 ]
 
 { #category : #example }
+LeExampleCustomPageTypeExamples >> modifyAndReloadPage [
+	<gtExample>
+	| database page pageJson |
+	database := self reregisterCustomPageTypeAndReloadPage.
+	page := database pages first.
+	page type theAnswer: page type theAnswer + 1.
+	page announceTreeChanged: page.
+	database monitor reload.
+	pageJson := NeoJSONReader
+			fromString: (LeJsonV4 uniqueInstance serializePretty: page).
+	self assert: (pageJson at: #pageType at: #theAnswer) = 43.
+	^ database
+]
+
+{ #category : #example }
 LeExampleCustomPageTypeExamples >> reloadPage [
 	<gtExample>
 	| database |
