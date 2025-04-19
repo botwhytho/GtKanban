@@ -170,12 +170,10 @@ LeSlideshowPageType >> slidesCreator [
 				gtPresenterSlideshow := GtPresenterSlideShow new.
 				gtPresenterSlideshow slides
 					slides: (self elementSnippets
-							collect: [ :elementSnippets | 
+							collect: [ :elementSnippet | 
 								GtPresenterSlide new
 									stencil: [ GtElementLiveSlide new
-											element: [ self flag: #TODO.	"Use editor machinery to run code"
-												Object
-													evaluate: elementSnippets coder currentSourceString ] ]
+											element: [  elementSnippet coder asCoderViewModel doIt value ] ]
 											asStencil ]).
 				slideshowViewModel := GtPresenterSlideShowViewModel new
 						slideShow: gtPresenterSlideshow.
