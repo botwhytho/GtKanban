@@ -9,7 +9,10 @@ Class {
 		'overlay',
 		'parent',
 		'placeholder',
-		'originalConstraints'
+		'originalConstraints',
+		'dragStartEventAction',
+		'dragEventAction',
+		'dragEndEventAction'
 	],
 	#classVars : [
 		'Any',
@@ -72,41 +75,42 @@ BlReorderingHandler >> disallowOutOfBounds [
 ]
 
 { #category : #'event handling' }
-BlReorderingHandler >> dragEndEvent: anEvent [
-	"anEvent consumed: true."
-
+BlReorderingHandler >> dragEndEvent: aBlDragEndEvent [
 	| draggable |
-	draggable := anEvent currentTarget.
+	"aBlDragEndEvent consumed: true."
+	self flag: #TODO.	"Test uncommenting above"
+	draggable := aBlDragEndEvent currentTarget.
 	overlay removeChild: draggable.
 	parent replaceChild: placeholder with: draggable.
 	overlay detach.
 	draggable constraints: originalConstraints.
 
-	anEvent currentTarget dispatchEvent: BlPullEndEvent new.
-	parent dispatchEvent: (BlChildOrderingPotentiallyChangedEvent parent: parent)
+	aBlDragEndEvent currentTarget dispatchEvent: BlPullEndEvent new.
+	self onDragEndEvent: aBlDragEndEvent
 ]
 
 { #category : #'event handling' }
-BlReorderingHandler >> dragEvent: anEvent [
+BlReorderingHandler >> dragEvent: aBlDragEvent [
 	| dragPosition dragDelta aNewPosition |
-	dragPosition := anEvent currentTarget
-		globalPointToParent: anEvent position.
-	self movePlaceholderIfOverOtherChild: anEvent.
+	dragPosition := aBlDragEvent currentTarget
+		globalPointToParent: aBlDragEvent position.
+	self movePlaceholderIfOverOtherChild: aBlDragEvent.
 	dragDelta := dragPosition
 		- (dragStartPosition ifNil: [ dragStartPosition := dragPosition ]).
 	dragDelta := self computePullDelta: dragDelta.
 	aNewPosition := (originalPosition
-		ifNil: [ originalPosition := anEvent currentTarget position ])
+		ifNil: [ originalPosition := aBlDragEvent currentTarget position ])
 		+ dragDelta.
 	allowedOutOfBounds
 		ifFalse: [ | aMaxPosition |
-			aMaxPosition := anEvent currentTarget hasParent
-				ifTrue: [ anEvent currentTarget parent extent - anEvent currentTarget extent ]
+			aMaxPosition := aBlDragEvent currentTarget hasParent
+				ifTrue: [ aBlDragEvent currentTarget parent extent - aBlDragEvent currentTarget extent ]
 				ifFalse: [ 0 @ 0 ].
 			aNewPosition := aNewPosition min: aMaxPosition max: 0 @ 0 ].
-	anEvent currentTarget relocate: aNewPosition.
-	anEvent consumed: true.
-	anEvent currentTarget
+	aBlDragEvent currentTarget relocate: aNewPosition.
+	aBlDragEvent consumed: true.
+	self onDragEvent: aBlDragEvent.
+	aBlDragEvent currentTarget
 		dispatchEvent:
 			(BlPullEvent new
 				initialPosition: originalPosition;
@@ -116,17 +120,18 @@ BlReorderingHandler >> dragEvent: anEvent [
 ]
 
 { #category : #'event handling' }
-BlReorderingHandler >> dragStartEvent: anEvent [
+BlReorderingHandler >> dragStartEvent: aBlDragStartEvent [
 	|draggable originalSize |
-	anEvent consumed: true.
-	draggable := anEvent currentTarget.
+	aBlDragStartEvent consumed: true.
+	self onDragStartEvent: aBlDragStartEvent.
+	draggable := aBlDragStartEvent currentTarget.
 	originalSize := draggable size.
 	parent := draggable parent.
 	overlay := BlOverlayElement on: parent.
 	parent parent addChild: overlay.
 
 	"drag start position in parent"
-	dragStartPosition := draggable globalPointToParent: anEvent position.
+	dragStartPosition := draggable globalPointToParent: aBlDragStartEvent position.
 
 	"element position in parent"
 	originalPosition := draggable position.
@@ -136,7 +141,7 @@ BlReorderingHandler >> dragStartEvent: anEvent [
 	overlay addChild: draggable.
 	draggable size: originalSize.
 
-	anEvent currentTarget dispatchEvent: BlPullStartEvent new
+	aBlDragStartEvent currentTarget dispatchEvent: BlPullStartEvent new
 ]
 
 { #category : #'api - accessing' }
@@ -147,9 +152,12 @@ BlReorderingHandler >> eventsToHandle [
 { #category : #initialization }
 BlReorderingHandler >> initialize [
 	super initialize.
-	
+
 	allowedOutOfBounds := false.
-	direction := Any
+	direction := Any.
+	dragStartEventAction := [ :aBlDragStartEvent |  ].
+	dragEventAction := [ :aBlDragEvent |  ].
+	dragEndEventAction := [ :aBlDragEndEvent |  ]
 ]
 
 { #category : #'event handling' }
@@ -165,6 +173,21 @@ BlReorderingHandler >> movePlaceholderIfOverOtherChild: anEvent [
 			index := parent childIndexOf: mouseOverOther.
 			parent removeChild: placeholder.
 			parent addChild: placeholder at: index ]
+]
+
+{ #category : #'event handling' }
+BlReorderingHandler >> onDragEndEvent: aBlDragEndEvent [
+	dragEndEventAction value: aBlDragEndEvent
+]
+
+{ #category : #'event handling' }
+BlReorderingHandler >> onDragEvent: aBlDragEvent [
+	dragEventAction value: aBlDragEvent
+]
+
+{ #category : #'event handling' }
+BlReorderingHandler >> onDragStartEvent: aBlDragStartEvent [
+	dragEndEventAction value: aBlDragStartEvent
 ]
 
 { #category : #'event handling' }
