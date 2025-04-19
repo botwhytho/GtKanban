@@ -1,8 +1,11 @@
 Class {
 	#name : #LeSlideshowPageType,
 	#superclass : #LeNamedPageType,
+	#traits : 'TGtAnnouncer',
+	#classTraits : 'TGtAnnouncer classTrait',
 	#instVars : [
-		'columnCount'
+		'columnCount',
+		'announcer'
 	],
 	#category : #'GtKanban-Model'
 }
@@ -69,6 +72,11 @@ LeSlideshowPageType class >> samplePage [
 	^ aPage
 ]
 
+{ #category : #announcer }
+LeSlideshowPageType >> announcer [
+	^ announcer ifNil: [ announcer := Announcer new ]
+]
+
 { #category : #ui }
 LeSlideshowPageType >> asPreviewElement [
 	^ self defaultPhlowTool asElement
@@ -93,11 +101,13 @@ LeSlideshowPageType >> changeLayoutButton [
 				ifTrue: [ grid columnCount: self detailedColumnCount.
 					self columnCount: self detailedColumnCount.
 					(grid query // LeElementSnippetElement) result
-						do: [ :aSnippetElement | aSnippetElement showCoder ] ]
+						do: [ :aSnippetElement | aSnippetElement showCoder ].
+					self announce: Announcement new ]
 				ifFalse: [ grid columnCount: self summaryColumnCount.
 					self columnCount: self summaryColumnCount.
 					(grid query // LeElementSnippetElement) result
-						do: [ :aSnippetElement | aSnippetElement hideCoder ] ] ]
+						do: [ :aSnippetElement | aSnippetElement hideCoder ].
+					self announce: Announcement new ] ]
 ]
 
 { #category : #accessing }
@@ -215,11 +225,20 @@ LeSlideshowPageType >> slidesGrid [
 					| aFrame reorderingHandler |
 					reorderingHandler := GtSlideReorderingHandler new page: self page.
 					aFrame := BrFrame new.
+					self flag: #TODO. "Does below leak?"
+					self "weak"
+						when: Announcement
+						do: [ :anAnnouncement | 
+							(aFrame eventDispatcher hasHandler: reorderingHandler)
+								ifTrue: [ aFrame
+										allowChildrenMouseEvents;
+										removeEventHandler: reorderingHandler ]
+								ifFalse: [ aFrame
+										preventChildrenMouseEvents;
+										addEventHandler: reorderingHandler ] ].
 					aFrame
 						vFitContent;
 						hMatchParent;
-						addEventHandler: reorderingHandler;
-						preventChildrenMouseEvents;
 						addAptitude: BrShadowAptitude new
 								+ (BrGlamorousSlideExteriorAptitude new
 										backgroundPaint: Color white;
@@ -227,18 +246,9 @@ LeSlideshowPageType >> slidesGrid [
 						when: BlMouseLeaveEvent
 							do: [ :anEvent | 
 								anEvent consumed: true.
-								aFrame
-									loseFocus;
-									preventChildrenMouseEvents.
-								(aFrame eventDispatcher
-									hasEventHandlerSuchThat: [ :anEventHandler | anEventHandler = reorderingHandler ])
+								aFrame hasFocus
+									ifTrue: [ aFrame loseFocus ]
 									ifFalse: [ aFrame addEventHandler: reorderingHandler ] ];
-						when: BlDoubleClickEvent
-							do: [ :anEvent | 
-								anEvent consumed: true.
-								aFrame
-									allowChildrenMouseEvents;
-									removeEventHandler: reorderingHandler ];
 						addChild: (aSnippet
 								elementHeight: 200;
 								codeHeight: 200;
