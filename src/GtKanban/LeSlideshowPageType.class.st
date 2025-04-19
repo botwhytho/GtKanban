@@ -102,12 +102,12 @@ LeSlideshowPageType >> changeLayoutButton [
 					self columnCount: self detailedColumnCount.
 					(grid query // LeElementSnippetElement) result
 						do: [ :aSnippetElement | aSnippetElement showCoder ].
-					self announce: Announcement new ]
+					self announce: GtSlidesGridShowMoreDetailEvent new ]
 				ifFalse: [ grid columnCount: self summaryColumnCount.
 					self columnCount: self summaryColumnCount.
 					(grid query // LeElementSnippetElement) result
 						do: [ :aSnippetElement | aSnippetElement hideCoder ].
-					self announce: Announcement new ] ]
+					self announce: GtSlidesGridShowLessDetailEvent new ] ]
 ]
 
 { #category : #accessing }
@@ -226,15 +226,16 @@ LeSlideshowPageType >> slidesGrid [
 					reorderingHandler := GtSlideReorderingHandler new page: self page.
 					aFrame := BrFrame new.
 					self weak
-						when: Announcement
-						do: [ :anAnnouncement | 
-							(aFrame eventDispatcher hasHandler: reorderingHandler)
-								ifTrue: [ aFrame
-										allowChildrenMouseEvents;
-										removeEventHandler: reorderingHandler ]
-								ifFalse: [ aFrame
-										preventChildrenMouseEvents;
-										addEventHandler: reorderingHandler ] ].
+						when: GtSlidesGridShowMoreDetailEvent
+							do: [ :anAnnouncement | 
+								aFrame
+									allowChildrenMouseEvents;
+									removeEventHandler: reorderingHandler ];
+						when: GtSlidesGridShowLessDetailEvent
+							do: [ :anAnnouncement | 
+								aFrame
+									preventChildrenMouseEvents;
+									addEventHandler: reorderingHandler ].
 					aFrame
 						vFitContent;
 						hMatchParent;
