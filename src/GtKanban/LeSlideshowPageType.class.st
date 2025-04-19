@@ -1,6 +1,9 @@
 Class {
 	#name : #LeSlideshowPageType,
 	#superclass : #LeNamedPageType,
+	#instVars : [
+		'columnCount'
+	],
 	#category : #'GtKanban-Model'
 }
 
@@ -71,12 +74,53 @@ LeSlideshowPageType >> asPreviewElement [
 	^ self defaultPhlowTool asElement
 ]
 
+{ #category : #ui }
+LeSlideshowPageType >> changeLayoutButton [
+	^ BrButton new
+		zIndex: 1000;
+		aptitude: BrGlamorousButtonWithIconAptitude;
+		margin: (BlInsets all: 25);
+		constraintsDo: [ :c | 
+			c frame horizontal alignLeft.
+			c frame vertical alignTop ];
+		label: 'Change Detail Level of Slide Grid';
+		icon: BrGlamorousVectorIcons hamburger;
+		action: [ :aBrButton :aBrButtonModel :anEvent | 
+			| grid |
+			anEvent consumed: true.
+			grid := (aBrButton parent query // #slidesGrid) result anyOne.
+			self columnCount = self summaryColumnCount
+				ifTrue: [ grid columnCount: self detailedColumnCount.
+					self columnCount: self detailedColumnCount.
+					(grid query // LeElementSnippetElement) result
+						do: [ :aSnippetElement | aSnippetElement showCoder ] ]
+				ifFalse: [ grid columnCount: self summaryColumnCount.
+					self columnCount: self summaryColumnCount.
+					(grid query // LeElementSnippetElement) result
+						do: [ :aSnippetElement | aSnippetElement hideCoder ] ] ]
+]
+
+{ #category : #accessing }
+LeSlideshowPageType >> columnCount [
+	^ columnCount
+]
+
+{ #category : #accessing }
+LeSlideshowPageType >> columnCount: anInteger [
+	columnCount := anInteger
+]
+
 { #category : #converting }
 LeSlideshowPageType >> defaultPhlowTool [
 	^ GtPhlowExplicitTool new withIconAptitude
 		name: self page title;
 		icon: BrGlamorousVectorIcons play;
 		stencil: [ self slidesCreator ]
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> detailedColumnCount [
+	^ 2
 ]
 
 { #category : #accessing }
@@ -95,6 +139,38 @@ LeSlideshowPageType >> pageTypeRepo [
 	^ pageTypeRepo ifNil: [ pageTypeRepo := 'https://github.com/feenkcom/lepiter' ]
 ]
 
+{ #category : #ui }
+LeSlideshowPageType >> playSlideshowButton [
+	^ BrButton new
+		zIndex: 1000;
+		aptitude: BrGlamorousButtonWithIconAptitude;
+		margin: (BlInsets all: 25);
+		constraintsDo: [ :c | 
+			c frame horizontal alignRight.
+			c frame vertical alignTop ];
+		label: 'Play slideshow in new window';
+		icon: BrGlamorousVectorIcons play;
+		action: [ :aBrButton :aBrButtonModel :anEvent | 
+			| gtPresenterSlideshow slideshowElement slideshowViewModel |
+			anEvent consumed: true.
+			gtPresenterSlideshow := GtPresenterSlideShow new.
+			gtPresenterSlideshow slides
+				slides: (self elementSnippets
+						collect: [ :elementSnippet | 
+							GtPresenterSlide new
+								stencil: [ GtElementLiveSlide new
+										element: [ elementSnippet coder asCoderViewModel doIt value ] ]
+										asStencil ]).
+			slideshowViewModel := GtPresenterSlideShowViewModel new
+					slideShow: gtPresenterSlideshow.
+			slideshowElement := GtPresenterSlideShowElement new
+					slideShowViewModel: slideshowViewModel.
+			BlSpace new
+				withSceneDriller;
+				addChild: slideshowElement;
+				show ]
+]
+
 { #category : #printing }
 LeSlideshowPageType >> printOn: aStream [
 
@@ -111,84 +187,65 @@ LeSlideshowPageType >> samplePage [
 
 { #category : #ui }
 LeSlideshowPageType >> slidesCreator [
-	| button container grid scrollable |
-	container := BrFrame new
-			hMatchParent;
-			vFitContent.
-
-	grid := BrHorizontalGrid new
+	| grid scrollable |
+	
+	grid := self slidesGrid.
+	scrollable := BrFrame new
 			hMatchParent;
 			vFitContent;
-			columnCount: 2;
-			cellSpacing: 10;
-			addChildren: (self elementSnippets
-					collect: [ :aSnippet | 
-						| aFrame reorderingHandler |
-						reorderingHandler := (BlSlideReorderingHandler new page: self page).
-						aFrame := BrFrame new.
-						aFrame
-							vFitContent;
-							hMatchParent;
-							addEventHandler: reorderingHandler;
-							preventChildrenMouseEvents;
-							addAptitude: BrShadowAptitude new
-									+ (BrGlamorousSlideExteriorAptitude new
-											backgroundPaint: Color white;
-											borderPaint: Color transparent);
-							when: BlMouseLeaveEvent
-								do: [ :anEvent | 
-									anEvent consumed: true.
-									aFrame
-										loseFocus;
-										preventChildrenMouseEvents.
-									(aFrame eventDispatcher
-										hasEventHandlerSuchThat: [ :anEventHandler | anEventHandler = reorderingHandler ])
-										ifFalse: [ aFrame addEventHandler: reorderingHandler ] ];
-							when: BlDoubleClickEvent
-								do: [ :anEvent | 
-									anEvent consumed: true.
-									aFrame
-										allowChildrenMouseEvents;
-										removeEventHandler: reorderingHandler ];
-							addChild: (aSnippet
-									elementHeight: 200;
-									codeHeight: 200;
-									asPreviewElement) ]).
-
-	button := BrButton new
-			zIndex: 1000;
-			aptitude: BrGlamorousButtonWithIconAptitude;
-			margin: (BlInsets all: 25);
-			constraintsDo: [ :c | 
-				c frame horizontal alignRight.
-				c frame vertical alignTop ];
-			label: 'Play slideshow in new window';
-			icon: BrGlamorousVectorIcons play;
-			action: [ :aBrButton :aBrButtonModel :anEvent | 
-				| gtPresenterSlideshow slideshowElement slideshowViewModel |
-				anEvent consumed: true.
-				gtPresenterSlideshow := GtPresenterSlideShow new.
-				gtPresenterSlideshow slides
-					slides: (self elementSnippets
-							collect: [ :elementSnippet | 
-								GtPresenterSlide new
-									stencil: [ GtElementLiveSlide new
-											element: [  elementSnippet coder asCoderViewModel doIt value ] ]
-											asStencil ]).
-				slideshowViewModel := GtPresenterSlideShowViewModel new
-						slideShow: gtPresenterSlideshow.
-				slideshowElement := GtPresenterSlideShowElement new
-						slideShowViewModel: slideshowViewModel.
-				BlSpace new
-					withSceneDriller;
-					addChild: slideshowElement;
-					show ].
-
-	scrollable := container
 			addChild: grid;
 			asScrollableElement.
-
 	^ BrFrame new matchParent
 		addChildren: {scrollable.
-				button}
+				self changeLayoutButton.
+				self playSlideshowButton}
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> slidesGrid [
+	self columnCount: self detailedColumnCount.
+	^ BrHorizontalGrid new
+		id: #slidesGrid;
+		hMatchParent;
+		vFitContent;
+		columnCount: self columnCount;
+		cellSpacing: 10;
+		addChildren: (self elementSnippets
+				collect: [ :aSnippet | 
+					| aFrame reorderingHandler |
+					reorderingHandler := GtSlideReorderingHandler new page: self page.
+					aFrame := BrFrame new.
+					aFrame
+						vFitContent;
+						hMatchParent;
+						addEventHandler: reorderingHandler;
+						preventChildrenMouseEvents;
+						addAptitude: BrShadowAptitude new
+								+ (BrGlamorousSlideExteriorAptitude new
+										backgroundPaint: Color white;
+										borderPaint: Color transparent);
+						when: BlMouseLeaveEvent
+							do: [ :anEvent | 
+								anEvent consumed: true.
+								aFrame
+									loseFocus;
+									preventChildrenMouseEvents.
+								(aFrame eventDispatcher
+									hasEventHandlerSuchThat: [ :anEventHandler | anEventHandler = reorderingHandler ])
+									ifFalse: [ aFrame addEventHandler: reorderingHandler ] ];
+						when: BlDoubleClickEvent
+							do: [ :anEvent | 
+								anEvent consumed: true.
+								aFrame
+									allowChildrenMouseEvents;
+									removeEventHandler: reorderingHandler ];
+						addChild: (aSnippet
+								elementHeight: 200;
+								codeHeight: 200;
+								asPreviewElement) ])
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> summaryColumnCount [
+	^ 4
 ]
