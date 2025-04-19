@@ -123,27 +123,33 @@ LeSlideshowPageType >> slidesCreator [
 			cellSpacing: 10;
 			addChildren: (self elementSnippets
 					collect: [ :aSnippet | 
-						BrFrame new
+						| aFrame reorderingHandler |
+						reorderingHandler := BlReorderingHandler new.
+						aFrame := BrFrame new.
+						aFrame
 							vFitContent;
 							hMatchParent;
-							addEventHandler: BlReorderingHandler new;
+							addEventHandler: reorderingHandler;
 							preventChildrenMouseEvents;
 							addAptitude: BrShadowAptitude new
 									+ (BrGlamorousButtonExteriorAptitude new
 											backgroundPaint: Color white;
 											borderPaint: Color transparent);
-							in: [ :aFrame | 
-								aFrame
-									when: BlDoubleClickEvent
-										do: [ :anEvent | 
-											anEvent consumed: true.
-											aFrame allowChildrenMouseEvents ];
-									when: BlMouseLeaveEvent
-										do: [ :anEvent | 
-											anEvent consumed: true.
-											anEvent currentTarget loseFocus.
-											aFrame preventChildrenMouseEvents ].
-								aFrame ];
+							when: BlMouseLeaveEvent
+								do: [ :anEvent | 
+									anEvent consumed: true.
+									aFrame
+										loseFocus;
+										preventChildrenMouseEvents.
+									(aFrame eventDispatcher
+										hasEventHandlerSuchThat: [ :anEventHandler | anEventHandler = reorderingHandler ])
+										ifFalse: [ aFrame addEventHandler: reorderingHandler ] ];
+							when: BlDoubleClickEvent
+								do: [ :anEvent | 
+									anEvent consumed: true.
+									aFrame
+										allowChildrenMouseEvents;
+										removeEventHandler: reorderingHandler ];
 							addChild: (aSnippet
 									elementHeight: 200;
 									codeHeight: 200;
