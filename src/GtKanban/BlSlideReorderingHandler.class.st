@@ -7,7 +7,7 @@ Class {
 	#category : #'GtKanban-Drag & Drop'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 BlSlideReorderingHandler >> initialize [
 	super initialize.
 	dragEndEventAction := [ :aBlDragEndEvent | 
