@@ -225,8 +225,7 @@ LeSlideshowPageType >> slidesGrid [
 					| aFrame reorderingHandler |
 					reorderingHandler := GtSlideReorderingHandler new page: self page.
 					aFrame := BrFrame new.
-					self flag: #TODO.	"Does below leak?"
-					self
+					self weak
 						when: Announcement
 						do: [ :anAnnouncement | 
 							(aFrame eventDispatcher hasHandler: reorderingHandler)
@@ -235,7 +234,7 @@ LeSlideshowPageType >> slidesGrid [
 										removeEventHandler: reorderingHandler ]
 								ifFalse: [ aFrame
 										preventChildrenMouseEvents;
-										addEventHandler: reorderingHandler ] ].	"weak"
+										addEventHandler: reorderingHandler ] ].
 					aFrame
 						vFitContent;
 						hMatchParent;
