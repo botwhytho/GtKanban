@@ -1,5 +1,5 @@
 Class {
-	#name : #BlSlideReorderingHandler,
+	#name : #GtSlideReorderingHandler,
 	#superclass : #BlReorderingHandler,
 	#instVars : [
 		'page'
@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #initialization }
-BlSlideReorderingHandler >> initialize [
+GtSlideReorderingHandler >> initialize [
 	super initialize.
 	dragEndEventAction := [ :aBlDragEndEvent | 
 		| newSlideOrder |
@@ -22,11 +22,11 @@ BlSlideReorderingHandler >> initialize [
 ]
 
 { #category : #accessing }
-BlSlideReorderingHandler >> page [
+GtSlideReorderingHandler >> page [
 	^ page
 ]
 
 { #category : #accessing }
-BlSlideReorderingHandler >> page: aLePage [
+GtSlideReorderingHandler >> page: aLePage [
 	page := aLePage
 ]
