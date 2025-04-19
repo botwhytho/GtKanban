@@ -44,6 +44,18 @@ LePageType class >> defaultSystemPageTypes [
 ]
 
 { #category : #'*GtKanban' }
+LePageType class >> gtSamplePageFor: anAction [
+	<gtClassAction>
+	(self respondsTo: #samplePage) ifFalse: [ anAction noAction ].
+
+	^ anAction button
+		priority: 0;
+		tooltip: 'Browse Sample Page';
+		icon: BrGlamorousVectorIcons eg;
+		action: [ :aButton | aButton phlow spawnObject: (self perform: #samplePage) ]
+]
+
+{ #category : #'*GtKanban' }
 LePageType >> initialize [
 super initialize.
 self pageTypeRepo
