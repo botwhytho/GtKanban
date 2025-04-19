@@ -123,18 +123,31 @@ LeSlideshowPageType >> slidesCreator [
 			cellSpacing: 10;
 			addChildren: (self elementSnippets
 					collect: [ :aSnippet | 
-						(aSnippet
-							elementHeight: 200;
-							codeHeight: 200;
-							asPreviewElement)
+						BrFrame new
+							vFitContent;
+							hMatchParent;
+							addEventHandler: BlReorderingHandler new;
+							preventChildrenMouseEvents;
 							addAptitude: BrShadowAptitude new
 									+ (BrGlamorousButtonExteriorAptitude new
 											backgroundPaint: Color white;
 											borderPaint: Color transparent);
-							addEventHandler: BlReorderingHandler new;
-							constraintsDo: [ :c | 
-								c vertical fitContent.
-								c horizontal matchParent ] ]).
+							in: [ :aFrame | 
+								aFrame
+									when: BlDoubleClickEvent
+										do: [ :anEvent | 
+											anEvent consumed: true.
+											aFrame allowChildrenMouseEvents ];
+									when: BlMouseLeaveEvent
+										do: [ :anEvent | 
+											anEvent consumed: true.
+											anEvent currentTarget loseFocus.
+											aFrame preventChildrenMouseEvents ].
+								aFrame ];
+							addChild: (aSnippet
+									elementHeight: 200;
+									codeHeight: 200;
+									asPreviewElement) ]).
 
 	button := BrButton new
 			zIndex: 1000;
@@ -154,9 +167,8 @@ LeSlideshowPageType >> slidesCreator [
 							collect: [ :elementSnippets | 
 								GtPresenterSlide new
 									stencil: [ GtElementLiveSlide new
-											element: [
-											self flag: #TODO. "Use editor machinery to run code"
-											 Object
+											element: [ self flag: #TODO.	"Use editor machinery to run code"
+												Object
 													evaluate: elementSnippets snippetViewModel snippetModel coder currentSourceString ] ]
 											asStencil ]).
 				slideshowViewModel := GtPresenterSlideShowViewModel new
@@ -171,7 +183,7 @@ LeSlideshowPageType >> slidesCreator [
 	scrollable := container
 			addChild: grid;
 			asScrollableElement.
-			
+
 	^ BrFrame new matchParent
 		addChildren: {scrollable.
 				button}
