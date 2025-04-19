@@ -132,7 +132,7 @@ LeSlideshowPageType >> slidesCreator [
 							addEventHandler: reorderingHandler;
 							preventChildrenMouseEvents;
 							addAptitude: BrShadowAptitude new
-									+ (BrGlamorousButtonExteriorAptitude new
+									+ (BrGlamorousSlideExteriorAptitude new
 											backgroundPaint: Color white;
 											borderPaint: Color transparent);
 							when: BlMouseLeaveEvent
@@ -169,13 +169,13 @@ LeSlideshowPageType >> slidesCreator [
 				anEvent consumed: true.
 				gtPresenterSlideshow := GtPresenterSlideShow new.
 				gtPresenterSlideshow slides
-					slides: (grid children
+					slides: (self elementSnippets
 							collect: [ :elementSnippets | 
 								GtPresenterSlide new
 									stencil: [ GtElementLiveSlide new
 											element: [ self flag: #TODO.	"Use editor machinery to run code"
 												Object
-													evaluate: elementSnippets snippetViewModel snippetModel coder currentSourceString ] ]
+													evaluate: elementSnippets coder currentSourceString ] ]
 											asStencil ]).
 				slideshowViewModel := GtPresenterSlideShowViewModel new
 						slideShow: gtPresenterSlideshow.
