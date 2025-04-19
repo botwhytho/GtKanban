@@ -124,7 +124,7 @@ LeSlideshowPageType >> slidesCreator [
 			addChildren: (self elementSnippets
 					collect: [ :aSnippet | 
 						| aFrame reorderingHandler |
-						reorderingHandler := BlReorderingHandler new.
+						reorderingHandler := (BlSlideReorderingHandler new page: self page).
 						aFrame := BrFrame new.
 						aFrame
 							vFitContent;
