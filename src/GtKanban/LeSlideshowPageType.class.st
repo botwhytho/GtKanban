@@ -125,7 +125,7 @@ LeSlideshowPageType >> defaultPhlowTool [
 	^ GtPhlowExplicitTool new withIconAptitude
 		name: self page title;
 		icon: BrGlamorousVectorIcons play;
-		stencil: [ self slidesCreator ]
+		stencil: [ self slidesTool ]
 ]
 
 { #category : #ui }
@@ -196,19 +196,8 @@ LeSlideshowPageType >> samplePage [
 ]
 
 { #category : #ui }
-LeSlideshowPageType >> slidesCreator [
-	| grid scrollable |
-	
-	grid := self slidesGrid.
-	scrollable := BrFrame new
-			hMatchParent;
-			vFitContent;
-			addChild: grid;
-			asScrollableElement.
-	^ BrFrame new matchParent
-		addChildren: {scrollable.
-				self changeLayoutButton.
-				self playSlideshowButton}
+LeSlideshowPageType >> slidesDetailTool [
+	^ BlBasicExamples new circle asScalableElement
 ]
 
 { #category : #ui }
@@ -251,6 +240,43 @@ LeSlideshowPageType >> slidesGrid [
 								elementHeight: 200;
 								codeHeight: 200;
 								asPreviewElement) ])
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> slidesGridTool [
+	| grid scrollable |
+	
+	grid := self slidesGrid.
+	scrollable := BrFrame new
+			hMatchParent;
+			vFitContent;
+			addChild: grid;
+			asScrollableElement.
+	^ BrFrame new matchParent
+		addChildren: {scrollable.
+				self changeLayoutButton.
+				self playSlideshowButton}
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> slidesTool [
+	| aFrame |
+	aFrame := BrFrame new
+			id: #slidesTool;
+			matchParent.
+	aFrame
+		addAptitude: (GtPhlowToolDetailAptitude new
+				normal: [ :aStyle | 
+					aStyle
+						do: [ aFrame
+								removeChildren;
+								addChild: self slidesGridTool ] ];
+				detailed: [ :aStyle | 
+					aStyle
+						do: [ aFrame
+								removeChildren;
+								addChild: self slidesDetailTool ] ]).
+	^ aFrame
 ]
 
 { #category : #ui }
