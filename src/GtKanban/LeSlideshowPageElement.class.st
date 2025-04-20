@@ -169,6 +169,67 @@ LeSlideshowPageElement >> slideDetailElementFor: aSnippet inParentTool: parentTo
 ]
 
 { #category : #ui }
+LeSlideshowPageElement >> slideGridElementForSnippet: aSnippet [
+	| aFrame reorderingHandler |
+	reorderingHandler := GtSlideReorderingHandler new page: self page.
+	aFrame := BrFrame new.
+	self weak
+		when: GtSlidesGridShowMoreDetailEvent
+			do: [ :anAnnouncement | 
+				aFrame
+					allowChildrenMouseEvents;
+					removeEventHandler: reorderingHandler ];
+		when: GtSlidesGridShowLessDetailEvent
+			do: [ :anAnnouncement | 
+				aFrame
+					preventChildrenMouseEvents;
+					addEventHandler: reorderingHandler ].
+	^ aFrame
+		vFitContent;
+		hMatchParent;
+		addAptitude: BrShadowAptitude new
+				+ (BrGlamorousSlideExteriorAptitude new
+						backgroundPaint: Color white;
+						borderPaint: Color transparent);
+		when: BlMouseLeaveEvent
+			do: [ :anEvent | 
+				anEvent consumed: true.
+				aFrame hasFocus ifTrue: [ aFrame loseFocus ] ];
+		addChild: (aSnippet
+				elementHeight: 200;
+				codeHeight: 200;
+				asPreviewElement)
+]
+
+{ #category : #ui }
+LeSlideshowPageElement >> slideListElementForSnippet: aSnippet [
+	^ BrFrame new
+		matchParent;
+		addAptitude: BrShadowAptitude new
+				+ (BrGlamorousSlideExteriorAptitude new
+						backgroundPaint: Color white;
+						borderPaint: Color transparent);
+		when: BlDoubleClickEvent
+			do: [ :anEvent | 
+				| parentTool |
+				anEvent consumed: true.
+				parentTool := anEvent currentTarget
+						allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
+						ifFound: #yourself
+						ifNone: [ nil ].
+				parentTool
+					replaceChild: parentTool children second
+					with: (self
+							slideDetailElementFor: (anEvent currentTarget query // LeElementSnippetElement) result first
+									snippetViewModel snippetModel
+							inParentTool: parentTool) ];
+		addChild: (aSnippet asPreviewElement
+				in: [ :aLeSnippetContainerElement | 
+					aLeSnippetContainerElement children first hideCoder.
+					aLeSnippetContainerElement ])
+]
+
+{ #category : #ui }
 LeSlideshowPageElement >> slidesDetailTool [
 	| pane |
 	pane := BrHorizontalPane new
@@ -189,36 +250,7 @@ LeSlideshowPageElement >> slidesGrid [
 		columnCount: self columnCount;
 		cellSpacing: 10;
 		addChildren: (self elementSnippets
-				collect: [ :aSnippet | 
-					| aFrame reorderingHandler |
-					reorderingHandler := GtSlideReorderingHandler new page: self page.
-					aFrame := BrFrame new.
-					self weak
-						when: GtSlidesGridShowMoreDetailEvent
-							do: [ :anAnnouncement | 
-								aFrame
-									allowChildrenMouseEvents;
-									removeEventHandler: reorderingHandler ];
-						when: GtSlidesGridShowLessDetailEvent
-							do: [ :anAnnouncement | 
-								aFrame
-									preventChildrenMouseEvents;
-									addEventHandler: reorderingHandler ].
-					aFrame
-						vFitContent;
-						hMatchParent;
-						addAptitude: BrShadowAptitude new
-								+ (BrGlamorousSlideExteriorAptitude new
-										backgroundPaint: Color white;
-										borderPaint: Color transparent);
-						when: BlMouseLeaveEvent
-							do: [ :anEvent | 
-								anEvent consumed: true.
-								aFrame hasFocus ifTrue: [ aFrame loseFocus ] ];
-						addChild: (aSnippet
-								elementHeight: 200;
-								codeHeight: 200;
-								asPreviewElement) ])
+				collect: [ :aSnippet | self slideGridElementForSnippet: aSnippet ])
 ]
 
 { #category : #ui }
@@ -243,40 +275,15 @@ LeSlideshowPageElement >> slidesGridTool [
 LeSlideshowPageElement >> slidesList [
 	| aVerticalPane |
 	self columnCount: self detailedColumnCount.
-	aVerticalPane := 
-	BrVerticalPane new
-		hMatchParent;
-		vFitContent;
-		constraintsDo: [ :c | c linear weight: 1 ];
-		cellSpacing: 10.
+	aVerticalPane := BrVerticalPane new
+			hMatchParent;
+			vFitContent;
+			constraintsDo: [ :c | c linear weight: 1 ];
+			cellSpacing: 10.
 	self onSnippetRemoved: aVerticalPane.
-	^ aVerticalPane addChildren: (self elementSnippets
-				collect: [ :aSnippet | 
-					BrFrame new
-						matchParent;
-						addAptitude: BrShadowAptitude new
-								+ (BrGlamorousSlideExteriorAptitude new
-										backgroundPaint: Color white;
-										borderPaint: Color transparent);
-						when: BlDoubleClickEvent
-							do: [ :anEvent | 
-								| parentTool |
-								anEvent consumed: true.
-								parentTool := anEvent currentTarget
-										allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
-										ifFound: #yourself
-										ifNone: [ nil ].
-								parentTool
-									replaceChild: parentTool children second
-									with: (self
-											slideDetailElementFor: (anEvent currentTarget query // LeElementSnippetElement) result first
-													snippetViewModel snippetModel
-											inParentTool: parentTool) ];
-						addChild: ((aSnippet
-								asPreviewElement)
-								in: [ :aLeSnippetContainerElement | 
-									aLeSnippetContainerElement children first hideCoder.
-									aLeSnippetContainerElement ]) ]);
+	^ aVerticalPane
+		addChildren: (self elementSnippets
+				collect: [ :aSnippet | self slideListElementForSnippet: aSnippet ]);
 		asScrollableElement
 ]
 
