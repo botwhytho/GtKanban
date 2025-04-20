@@ -62,7 +62,7 @@ LeSlideshowPageType class >> samplePage [
 		do: [ :n | 
 			aPage
 				addSnippet: (LeElementSnippet new
-						code: 'BlBasicExamples new circle background: Color random "Slide # ' , n asString
+						code: 'BlBasicExamples new circle background: ' , Color random storeString , ' "Slide # ' , n asString
 								, '. Move slides around to change slide order"';
 				uid: LeUID new) ].
 	^ aPage

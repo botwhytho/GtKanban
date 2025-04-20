@@ -161,7 +161,10 @@ LeSlideshowPageElement >> slideDetailElementFor: aSnippet inParentTool: parentTo
 			aLeSnippetContainerElement children first
 				updateCoderHeightTo: parentTool extent y * 0.25;
 				updateElementHeightTo: parentTool extent y * 0.65.
-			aFrame addChild: aLeSnippetContainerElement ] asBlTask.
+			aFrame
+				addChild: (BrFrame new
+						matchParent;
+						addChild: aLeSnippetContainerElement) ] asBlTask.
 	^ aFrame
 ]
 
