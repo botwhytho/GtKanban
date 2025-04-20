@@ -89,6 +89,24 @@ LeSlideshowPageElement >> initialize [
 ]
 
 { #category : #ui }
+LeSlideshowPageElement >> onSnippetAdded: aGrid [
+	self page announcer weak
+		when: LeContentCommandExecutedAnnouncement
+		do: [ :anAnnouncement | 
+			(anAnnouncement command isKindOf: LeContentInsertChildSnippetCommand)
+				ifTrue: [ | snippetsInUI previousSnippet |
+					snippetsInUI := (aGrid query // LeSnippetContainerElement) result
+							collect: [ :each | each children first snippetViewModel snippetModel ].
+					previousSnippet := self
+							previousSnippetBeforeNewSnippet: snippetsInUI
+							inPage: self elementSnippets.
+					self flag: #TODO.	"How to define the correct element creation logic depending on the view we are in. Maybe create classes and have logic there?"
+					aGrid
+						addChild: (self slideGridElementForSnippet: anAnnouncement command childSnippet)
+						after: previousSnippet ] ]
+]
+
+{ #category : #ui }
 LeSlideshowPageElement >> onSnippetRemoved: aGrid [
 	self page announcer weak
 		when: LeContentCommandExecutedAnnouncement
@@ -141,6 +159,23 @@ LeSlideshowPageElement >> playSlideshowButton [
 				withSceneDriller;
 				addChild: slideshowElement;
 				show ]
+]
+
+{ #category : #ui }
+LeSlideshowPageElement >> previousSnippetBeforeNewSnippet: snippetsInUI inPage: pageSnippets [
+	| snippetsInUIStream pageSnippetsStream previousSnippet currentSnippet newSnippet |
+	snippetsInUIStream := snippetsInUI readStream.
+	pageSnippetsStream := pageSnippets readStream.
+	previousSnippet := nil.
+	currentSnippet := nil.
+	newSnippet := nil.
+	[ previousSnippet := currentSnippet.
+	currentSnippet := snippetsInUIStream next.
+	newSnippet := pageSnippetsStream next.
+	currentSnippet = newSnippet and: [ snippetsInUIStream atEnd not ] ].
+	^ currentSnippet = newSnippet
+		ifTrue: [ currentSnippet ]
+		ifFalse: [ previousSnippet ]
 ]
 
 { #category : #ui }
