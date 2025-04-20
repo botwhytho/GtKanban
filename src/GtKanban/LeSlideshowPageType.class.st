@@ -313,12 +313,11 @@ LeSlideshowPageType >> slidesList [
 					BrFrame new
 						vExact: 200;
 						hMatchParent;
-						preventChildrenMouseEvents;
 						addAptitude: BrShadowAptitude new
 								+ (BrGlamorousSlideExteriorAptitude new
 										backgroundPaint: Color white;
 										borderPaint: Color transparent);
-						when: BlClickEvent
+						when: BlDoubleClickEvent
 							do: [ :anEvent | 
 								| parentTool |
 								anEvent consumed: true.
