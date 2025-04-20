@@ -196,8 +196,42 @@ LeSlideshowPageType >> samplePage [
 ]
 
 { #category : #ui }
+LeSlideshowPageType >> slideDetailElementFor: aSnippet [
+	^ BrFrame new
+		padding: (BlInsets all: 10);
+		matchParent;
+		addAptitude: BrShadowAptitude new
+				+ (BrGlamorousSlideExteriorAptitude new
+						backgroundPaint: Color white;
+						borderPaint: Color transparent);
+		addChild: (aSnippet
+				codeHeight: 200;
+				asPreviewElement)
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> slidesDetail [
+	^ self elementSnippets first
+		in: [ :aSnippet | 
+			BrFrame new
+				padding: (BlInsets all: 10);
+				matchParent;
+				addAptitude: BrShadowAptitude new
+						+ (BrGlamorousSlideExteriorAptitude new
+								backgroundPaint: Color white;
+								borderPaint: Color transparent);
+				addChild: (aSnippet
+						codeHeight: 200;
+						asPreviewElement) ]
+]
+
+{ #category : #ui }
 LeSlideshowPageType >> slidesDetailTool [
-	^ BlBasicExamples new circle asScalableElement
+	^ BrHorizontalPane new
+		id: #slidesDetailTool;
+		matchParent;
+		addChildren: {self slidesList.
+				self slideDetailElementFor: self elementSnippets first}
 ]
 
 { #category : #ui }
@@ -256,6 +290,40 @@ LeSlideshowPageType >> slidesGridTool [
 		addChildren: {scrollable.
 				self changeLayoutButton.
 				self playSlideshowButton}
+]
+
+{ #category : #ui }
+LeSlideshowPageType >> slidesList [
+	self columnCount: self detailedColumnCount.
+	^ BrVerticalPane new
+		hMatchParent;
+		vFitContent;
+		cellSpacing: 10;
+		addChildren: (self elementSnippets
+				collect: [ :aSnippet | 
+					BrFrame new
+						vFitContent;
+						hMatchParent;
+						preventChildrenMouseEvents;
+						addAptitude: BrShadowAptitude new
+								+ (BrGlamorousSlideExteriorAptitude new
+										backgroundPaint: Color white;
+										borderPaint: Color transparent);
+						addChild: ((aSnippet
+								elementHeight: 200;
+								asPreviewElement)
+								hideCoder;
+								when: BlClickEvent
+									do: [ :anEvent | 
+										| parentTool |
+										anEvent consumed: true.
+										parentTool := anEvent currentTarget
+												allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
+												ifFound: #yourself
+												ifNone: [ nil ].
+										parentTool
+											replaceChild: parentTool children second
+											with: (self slideDetailElementFor: anEvent currentTarget snippetViewModel snippetModel) ]) ])
 ]
 
 { #category : #ui }
