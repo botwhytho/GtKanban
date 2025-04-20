@@ -60,15 +60,17 @@ LeSlideshowPageType class >> samplePage [
 			element: [ GtLudoGame new asElement asScalableElement ] ].
 
 	aPage
-		addSnippet: (LeElementSnippet
-				code: slideCode sourceNode formattedCode allButFirst allButLast).
+		addSnippet: (LeElementSnippet new
+				code: slideCode sourceNode formattedCode allButFirst allButLast;
+				uid: LeUID new).
 	2
 		to: 9
 		do: [ :n | 
 			aPage
-				addSnippet: (LeElementSnippet
+				addSnippet: (LeElementSnippet new
 						code: 'BlBasicExamples new circle background: Color random "Slide # ' , n asString
-								, '. Move slides around to change slide order"') ].
+								, '. Move slides around to change slide order"';
+				uid: LeUID new) ].
 	^ aPage
 ]
 
@@ -271,16 +273,26 @@ LeSlideshowPageType >> slidesGrid [
 
 { #category : #ui }
 LeSlideshowPageType >> slidesGridTool [
-	| grid scrollable |
-	
-	grid := self slidesGrid.
-	scrollable := BrFrame new
+	| aFrame aGrid aScrollable |
+	aFrame := BrFrame new matchParent.
+	aGrid := self slidesGrid.
+	aScrollable := BrFrame new
 			hMatchParent;
 			vFitContent;
-			addChild: grid;
+			addChild: aGrid;
 			asScrollableElement.
-	^ BrFrame new matchParent
-		addChildren: {scrollable.
+	self page announcer weak
+		when: LeContentCommandExecutedAnnouncement
+		do: [ :anAnnouncement | 
+			(anAnnouncement command isKindOf: LeContentRemoveChildSnippetCommand)
+				ifTrue: [ (aFrame query // LeSnippetContainerElement) result
+						detect: [ :each | 
+							each children first snippetViewModel snippetModel
+								= anAnnouncement command childSnippet ]
+						ifFound: [ :found | aGrid removeChild: found parent ] ] ].
+
+	^ aFrame
+		addChildren: {aScrollable.
 				self changeLayoutButton.
 				self playSlideshowButton}
 ]
