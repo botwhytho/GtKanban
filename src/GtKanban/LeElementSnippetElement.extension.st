@@ -5,5 +5,5 @@ LeElementSnippetElement >> updateElementHeightTo: aHeight [
 	self isCoderCreated
 		ifFalse: [ ^ self ].
 
-	coderElement vExact: aHeight 
+	elementContainer vExact: aHeight 
 ]

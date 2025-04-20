@@ -210,26 +210,10 @@ LeSlideshowPageType >> slideDetailElementFor: aSnippet inParentTool: parentTool 
 		enqueueTask: [ | aLeSnippetContainerElement |
 			aLeSnippetContainerElement := aSnippet asPreviewElement.
 			aLeSnippetContainerElement children first
-				updateCoderHeightTo: parentTool extent y * 0.20;
-				updateElementHeightTo: parentTool extent y * 0.70.
+				updateCoderHeightTo: parentTool extent y * 0.25;
+				updateElementHeightTo: parentTool extent y * 0.65.
 			aFrame addChild: aLeSnippetContainerElement ] asBlTask.
 	^ aFrame
-]
-
-{ #category : #ui }
-LeSlideshowPageType >> slidesDetail [
-	^ self elementSnippets first
-		in: [ :aSnippet | 
-			BrFrame new
-				padding: (BlInsets all: 10);
-				matchParent;
-				addAptitude: BrShadowAptitude new
-						+ (BrGlamorousSlideExteriorAptitude new
-								backgroundPaint: Color white;
-								borderPaint: Color transparent);
-				addChild: (aSnippet
-						codeHeight: 200;
-						asPreviewElement) ]
 ]
 
 { #category : #ui }
