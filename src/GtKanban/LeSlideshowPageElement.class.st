@@ -69,7 +69,7 @@ LeSlideshowPageElement >> elementSnippets [
 	^ result
 ]
 
-{ #category : #'initialization\t' }
+{ #category : #initialization }
 LeSlideshowPageElement >> initialize [
 	super initialize.
 	self
