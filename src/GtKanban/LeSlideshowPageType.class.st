@@ -196,17 +196,23 @@ LeSlideshowPageType >> samplePage [
 ]
 
 { #category : #ui }
-LeSlideshowPageType >> slideDetailElementFor: aSnippet [
-	^ BrFrame new
-		padding: (BlInsets all: 10);
-		matchParent;
-		addAptitude: BrShadowAptitude new
-				+ (BrGlamorousSlideExteriorAptitude new
-						backgroundPaint: Color white;
-						borderPaint: Color transparent);
-		addChild: (aSnippet
-				codeHeight: 200;
-				asPreviewElement)
+LeSlideshowPageType >> slideDetailElementFor: aSnippet inParentTool: parentTool [
+	| aFrame |
+	aFrame := BrFrame new
+			padding: (BlInsets all: 10);
+			matchParent;
+			constraintsDo: [:c | c linear weight: 4 ];
+			addAptitude: BrShadowAptitude new
+					+ (BrGlamorousSlideExteriorAptitude new
+							backgroundPaint: Color white;
+							borderPaint: Color transparent).
+	aFrame
+		enqueueTask: [ aFrame
+				addChild: (aSnippet
+						codeHeight: parentTool extent y * 0.20;
+						elementHeight: parentTool extent y * 0.70;
+						asPreviewElement) ] asBlTask.
+	^ aFrame
 ]
 
 { #category : #ui }
@@ -227,11 +233,13 @@ LeSlideshowPageType >> slidesDetail [
 
 { #category : #ui }
 LeSlideshowPageType >> slidesDetailTool [
-	^ BrHorizontalPane new
-		id: #slidesDetailTool;
-		matchParent;
+	| pane |
+	pane := BrHorizontalPane new
+			id: #slidesDetailTool;
+			matchParent.
+	^ pane
 		addChildren: {self slidesList.
-				self slideDetailElementFor: self elementSnippets first}
+				self slideDetailElementFor: self elementSnippets first inParentTool: pane}
 ]
 
 { #category : #ui }
@@ -298,32 +306,39 @@ LeSlideshowPageType >> slidesList [
 	^ BrVerticalPane new
 		hMatchParent;
 		vFitContent;
+		constraintsDo: [ :c | c linear weight: 1 ];
 		cellSpacing: 10;
 		addChildren: (self elementSnippets
 				collect: [ :aSnippet | 
 					BrFrame new
-						vFitContent;
+						vExact: 200;
 						hMatchParent;
 						preventChildrenMouseEvents;
 						addAptitude: BrShadowAptitude new
 								+ (BrGlamorousSlideExteriorAptitude new
 										backgroundPaint: Color white;
 										borderPaint: Color transparent);
+						when: BlClickEvent
+							do: [ :anEvent | 
+								| parentTool |
+								anEvent consumed: true.
+								parentTool := anEvent currentTarget
+										allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
+										ifFound: #yourself
+										ifNone: [ nil ].
+								parentTool
+									replaceChild: parentTool children second
+									with: (self
+											slideDetailElementFor: (anEvent currentTarget query // LeElementSnippetElement) result first
+													snippetViewModel snippetModel
+											inParentTool: parentTool) ];
 						addChild: ((aSnippet
 								elementHeight: 200;
 								asPreviewElement)
-								hideCoder;
-								when: BlClickEvent
-									do: [ :anEvent | 
-										| parentTool |
-										anEvent consumed: true.
-										parentTool := anEvent currentTarget
-												allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
-												ifFound: #yourself
-												ifNone: [ nil ].
-										parentTool
-											replaceChild: parentTool children second
-											with: (self slideDetailElementFor: anEvent currentTarget snippetViewModel snippetModel) ]) ])
+								in: [ :aLeSnippetContainerElement | 
+									aLeSnippetContainerElement children first hideCoder.
+									aLeSnippetContainerElement ]) ]);
+		asScrollableElement
 ]
 
 { #category : #ui }
