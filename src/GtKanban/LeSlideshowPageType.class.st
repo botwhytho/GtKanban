@@ -201,17 +201,18 @@ LeSlideshowPageType >> slideDetailElementFor: aSnippet inParentTool: parentTool 
 	aFrame := BrFrame new
 			padding: (BlInsets all: 10);
 			matchParent;
-			constraintsDo: [:c | c linear weight: 4 ];
+			constraintsDo: [ :c | c linear weight: 4 ];
 			addAptitude: BrShadowAptitude new
 					+ (BrGlamorousSlideExteriorAptitude new
 							backgroundPaint: Color white;
 							borderPaint: Color transparent).
 	aFrame
-		enqueueTask: [ aFrame
-				addChild: (aSnippet
-						codeHeight: parentTool extent y * 0.20;
-						elementHeight: parentTool extent y * 0.70;
-						asPreviewElement) ] asBlTask.
+		enqueueTask: [ | aLeSnippetContainerElement |
+			aLeSnippetContainerElement := aSnippet asPreviewElement.
+			aLeSnippetContainerElement children first
+				updateCoderHeightTo: parentTool extent y * 0.20;
+				updateElementHeightTo: parentTool extent y * 0.70.
+			aFrame addChild: aLeSnippetContainerElement ] asBlTask.
 	^ aFrame
 ]
 
@@ -311,8 +312,7 @@ LeSlideshowPageType >> slidesList [
 		addChildren: (self elementSnippets
 				collect: [ :aSnippet | 
 					BrFrame new
-						vExact: 200;
-						hMatchParent;
+						matchParent;
 						addAptitude: BrShadowAptitude new
 								+ (BrGlamorousSlideExteriorAptitude new
 										backgroundPaint: Color white;
@@ -332,7 +332,6 @@ LeSlideshowPageType >> slidesList [
 													snippetViewModel snippetModel
 											inParentTool: parentTool) ];
 						addChild: ((aSnippet
-								elementHeight: 200;
 								asPreviewElement)
 								in: [ :aLeSnippetContainerElement | 
 									aLeSnippetContainerElement children first hideCoder.
