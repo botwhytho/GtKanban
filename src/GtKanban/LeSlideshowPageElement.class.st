@@ -72,7 +72,20 @@ LeSlideshowPageElement >> elementSnippets [
 { #category : #'initialization\t' }
 LeSlideshowPageElement >> initialize [
 	super initialize.
-	self matchParent
+	self
+		id: #slideshowPageTool;
+		matchParent;
+		addAptitude: (GtPhlowToolDetailAptitude new
+				normal: [ :aStyle | 
+					aStyle
+						do: [ self
+								removeChildren;
+								addChild: self slidesGridTool ] ];
+				detailed: [ :aStyle | 
+					aStyle
+						do: [ self
+								removeChildren;
+								addChild: self slidesDetailTool ] ])
 ]
 
 { #category : #accessing }
@@ -253,27 +266,6 @@ LeSlideshowPageElement >> slidesList [
 									aLeSnippetContainerElement children first hideCoder.
 									aLeSnippetContainerElement ]) ]);
 		asScrollableElement
-]
-
-{ #category : #ui }
-LeSlideshowPageElement >> slidesTool [
-	| aFrame |
-	aFrame := BrFrame new
-			id: #slidesTool;
-			matchParent.
-	aFrame
-		addAptitude: (GtPhlowToolDetailAptitude new
-				normal: [ :aStyle | 
-					aStyle
-						do: [ aFrame
-								removeChildren;
-								addChild: self slidesGridTool ] ];
-				detailed: [ :aStyle | 
-					aStyle
-						do: [ aFrame
-								removeChildren;
-								addChild: self slidesDetailTool ] ]).
-	^ aFrame
 ]
 
 { #category : #ui }
