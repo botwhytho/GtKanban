@@ -298,6 +298,7 @@ LeSlideshowPageElement >> slidesGridTool [
 			vFitContent;
 			addChild: aGrid;
 			asScrollableElement.
+	self onSnippetAdded: aGrid.
 	self onSnippetRemoved: aGrid.
 
 	^ aFrame
