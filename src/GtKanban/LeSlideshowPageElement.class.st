@@ -88,6 +88,19 @@ LeSlideshowPageElement >> initialize [
 								addChild: self slidesDetailTool ] ])
 ]
 
+{ #category : #ui }
+LeSlideshowPageElement >> onSnippetRemoved: aGrid [
+	self page announcer weak
+		when: LeContentCommandExecutedAnnouncement
+		do: [ :anAnnouncement | 
+			(anAnnouncement command isKindOf: LeContentRemoveChildSnippetCommand)
+				ifTrue: [ (aGrid query // LeSnippetContainerElement) result
+						detect: [ :each | 
+							each children first snippetViewModel snippetModel
+								= anAnnouncement command childSnippet ]
+						ifFound: [ :found | aGrid removeChild: found parent ] ] ]
+]
+
 { #category : #accessing }
 LeSlideshowPageElement >> page [
 	^ page
@@ -141,6 +154,7 @@ LeSlideshowPageElement >> slideDetailElementFor: aSnippet inParentTool: parentTo
 					+ (BrGlamorousSlideExteriorAptitude new
 							backgroundPaint: Color white;
 							borderPaint: Color transparent).
+	self onSnippetRemoved: aFrame.
 	aFrame
 		enqueueTask: [ | aLeSnippetContainerElement |
 			aLeSnippetContainerElement := aSnippet asPreviewElement.
@@ -214,15 +228,7 @@ LeSlideshowPageElement >> slidesGridTool [
 			vFitContent;
 			addChild: aGrid;
 			asScrollableElement.
-	self page announcer weak
-		when: LeContentCommandExecutedAnnouncement
-		do: [ :anAnnouncement | 
-			(anAnnouncement command isKindOf: LeContentRemoveChildSnippetCommand)
-				ifTrue: [ (aFrame query // LeSnippetContainerElement) result
-						detect: [ :each | 
-							each children first snippetViewModel snippetModel
-								= anAnnouncement command childSnippet ]
-						ifFound: [ :found | aGrid removeChild: found parent ] ] ].
+	self onSnippetRemoved: aGrid.
 
 	^ aFrame
 		addChildren: {aScrollable.
@@ -232,13 +238,16 @@ LeSlideshowPageElement >> slidesGridTool [
 
 { #category : #ui }
 LeSlideshowPageElement >> slidesList [
+	| aVerticalPane |
 	self columnCount: self detailedColumnCount.
-	^ BrVerticalPane new
+	aVerticalPane := 
+	BrVerticalPane new
 		hMatchParent;
 		vFitContent;
 		constraintsDo: [ :c | c linear weight: 1 ];
-		cellSpacing: 10;
-		addChildren: (self elementSnippets
+		cellSpacing: 10.
+	self onSnippetRemoved: aVerticalPane.
+	^ aVerticalPane addChildren: (self elementSnippets
 				collect: [ :aSnippet | 
 					BrFrame new
 						matchParent;
