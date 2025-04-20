@@ -157,7 +157,7 @@ LeSlideshowPageElement >> slideDetailElementFor: aSnippet inParentTool: parentTo
 	self onSnippetRemoved: aFrame.
 	aFrame
 		enqueueTask: [ | aLeSnippetContainerElement |
-			aLeSnippetContainerElement := aSnippet asPreviewElement.
+			aLeSnippetContainerElement := aSnippet asSlideshowPageElement.
 			aLeSnippetContainerElement children first
 				updateCoderHeightTo: parentTool extent y * 0.25;
 				updateElementHeightTo: parentTool extent y * 0.65.
@@ -198,7 +198,7 @@ LeSlideshowPageElement >> slideGridElementForSnippet: aSnippet [
 		addChild: (aSnippet
 				elementHeight: 200;
 				codeHeight: 200;
-				asPreviewElement)
+				asSlideshowPageElement)
 ]
 
 { #category : #ui }
@@ -223,7 +223,7 @@ LeSlideshowPageElement >> slideListElementForSnippet: aSnippet [
 							slideDetailElementFor: (anEvent currentTarget query // LeElementSnippetElement) result first
 									snippetViewModel snippetModel
 							inParentTool: parentTool) ];
-		addChild: (aSnippet asPreviewElement
+		addChild: (aSnippet asSlideshowPageElement
 				in: [ :aLeSnippetContainerElement | 
 					aLeSnippetContainerElement children first hideCoder.
 					aLeSnippetContainerElement ])

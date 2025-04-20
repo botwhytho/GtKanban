@@ -4,10 +4,10 @@ Extension { #name : #LeElementSnippet }
 LeElementSnippet >> asSlideshowPageElement [
 	| viewModel snippetElement |
 	viewModel := self asSnippetViewModel.
-	snippetElement := (LeSlideshowPageSnippetView new
+	snippetElement := ((LeSlideshowPageSnippetView new
 			snippetElementClass: viewModel snippetElementClass)
 			beFullWidth;
-			needsContentDecorationBar: false.
+			needsContentDecorationBar: false) asElement.
 	snippetElement snippetViewModel: viewModel.
 	snippetElement padding: (BlInsets all: 10).
 	^ snippetElement
