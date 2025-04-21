@@ -30,7 +30,7 @@ LeSlideshowPageSnippetExpandableAptitude >> newAddSnippetDropdown [
 					objectActOn: [ :anActOnEvent :aMenuItem :theButton |
 						"{anActOnEvent .aMenuItem .theButton} logToNamed: 'Slides'."
 						"self snippetBelowRequested:" 
-						self widget snippetViewModel snippetModel addSnippetAfterSelf: aMenuItem asSnippet.
+						self widget snippetViewModel snippetModel addSnippetAfterSelf: (aMenuItem asSnippet uid: LeUID new).
 						anActOnEvent beActed ];
 					spotterElementFor: aButton ]
 			containerDo: [ :aMenuContainer | 

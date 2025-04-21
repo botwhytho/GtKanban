@@ -180,7 +180,7 @@ LeSlideshowPageElement >> previousSnippetBeforeNewSnippet: snippetElementsInUI i
 	self flag: #TODO.	"REALLY clean up this code. Probably use wrapper classes for the snippet elements to keep them clean."
 	^ currentSnippet = newSnippet
 		ifTrue: [ currentSnippet key parent ]
-		ifFalse: [ previousSnippet key parent ]
+		ifFalse: [ previousSnippet "currentSnippet" key parent ]
 ]
 
 { #category : #ui }
