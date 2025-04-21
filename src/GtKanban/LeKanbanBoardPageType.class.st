@@ -4,6 +4,11 @@ Class {
 	#category : #GtKanban
 }
 
+{ #category : #initialization }
+LeKanbanBoardPageType class >> initialize [
+	super initialize.
+]
+
 { #category : #accesing }
 LeKanbanBoardPageType class >> leJsonV4Name [
 

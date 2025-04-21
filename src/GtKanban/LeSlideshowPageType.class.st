@@ -4,6 +4,11 @@ Class {
 	#category : #'GtKanban-Model'
 }
 
+{ #category : #initialization }
+LeSlideshowPageType class >> initialize [
+	super initialize.
+]
+
 { #category : #jsonV4 }
 LeSlideshowPageType class >> leJsonV4AttributeMapping [
 

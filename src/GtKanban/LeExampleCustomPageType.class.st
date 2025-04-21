@@ -28,6 +28,11 @@ Class {
 	#category : #'GtKanban-Model'
 }
 
+{ #category : #initialization }
+LeExampleCustomPageType class >> initialize [
+	super initialize.
+]
+
 { #category : #'as yet unclassified' }
 LeExampleCustomPageType class >> leJsonV4AttributeMapping [
 
