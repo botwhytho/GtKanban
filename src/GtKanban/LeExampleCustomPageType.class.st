@@ -3,7 +3,7 @@ This is an example of a custom page type. It doesn't really do anything, but it 
 
 The best approach for creating a new custom page type is to copy {{gtClass:LeExampleCustomPageType}} (this class) in your own package, including all it's methods, then start modifying the below methods accordingly.
 
-- {{gtMethod:LeExampleCustomPageType class>>#initialize}} : In your custom page type class's `initialize` method, you need to 'register' that class on all the databases in the system
+- {{gtMethod:LeExampleCustomPageType class>>#initialize}} : In your custom page type class's `initialize` method, you need to 'register' that class on all the databases in the system. This will automatically get done in the `super initialize` call but you **DO** need to define an initialize class method and make the super call, this will **NOT** happen automatically. When you are testing locally, before code is loaded through Metacello or other means, you will need to evaluate this method manually for your class to be able to be recognized by Lepiter databases and serializers/deserializers.
 
 - {{gtMethod:LeExampleCustomPageType>>#printOn:}} controls how your class is displayed, should override or you might think a page has been defined with the incorrect page type as it will display the superclass 'Named Page:' string
 
