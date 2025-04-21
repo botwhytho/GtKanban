@@ -8,8 +8,39 @@ Class {
 		'announcer',
 		'page'
 	],
+	#classInstVars : [
+		'slideTemplates'
+	],
 	#category : #'GtKanban-UI'
 }
+
+{ #category : #accessing }
+LeSlideshowPageElement class >> slidePreviewForTemplate: aMethod [
+	| aSlide anObject |
+	anObject := aMethod methodClass new.
+	[ aSlide := thisContext
+			object: anObject
+			perform: aMethod selector
+			withArguments: {GtEmptySlide new}
+			inClass: anObject class ]
+		on: Error
+		do: [ :anException | 
+			aSlide := GtLiveSlideWithError new
+					definingMethod: (anObject class >> aMethod) asRingDefinition;
+					error: anException ].
+	^ aSlide
+]
+
+{ #category : #accessing }
+LeSlideshowPageElement class >> slideTemplates [
+	^ slideTemplates
+		ifNil: [ | stream |
+			stream := (#gtSlide gtReferences
+					& (DemoSlideshow gtMethodsInClass | #gtExample gtPragmas)) asAsyncStream
+					map: [ :each | each -> self slidePreviewForTemplate: each ].
+			slideTemplates := stream cached ]
+		ifNotNil: [ slideTemplates asyncSimilarCopy ]
+]
 
 { #category : #announcer }
 LeSlideshowPageElement >> announcer [
