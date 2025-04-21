@@ -4,16 +4,6 @@ Class {
 	#category : #GtKanban
 }
 
-{ #category : #initialization }
-LeKanbanBoardPageType class >> initialize [
-	self flag: #TODO.	"Remove noce upstream is merged on superclass"
-	super initialize.
-	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter.
-	self leJsonV4MappingFor: LeJsonV4 uniqueInstance newReader.
-	LeDatabasesRegistry defaultLogicalDatabase databases
-		do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ]
-]
-
 { #category : #accesing }
 LeKanbanBoardPageType class >> leJsonV4Name [
 
