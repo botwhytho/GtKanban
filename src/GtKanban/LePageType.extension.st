@@ -56,9 +56,13 @@ LePageType class >> gtSamplePageFor: anAction [
 ]
 
 { #category : #'*GtKanban' }
-LePageType >> initialize [
-super initialize.
-self pageTypeRepo
+LePageType >> gtSpawnWithDefaultPhlowToolActionFor: anAction [
+	<gtAction>
+	^ anAction button
+		priority: 0;
+		tooltip: 'Inspect with default page phlow tool';
+		icon: LeIcons lepiterPage;
+		action: [ :aButton | aButton phlow spawnTool: self page asLepiterPagePhlowTool ]
 ]
 
 { #category : #'*GtKanban' }
@@ -73,6 +77,12 @@ LePageType class >> initialize [
 			self leJsonV4MappingFor: LeJsonV4 uniqueInstance newReader.
 			LeDatabasesRegistry defaultLogicalDatabase databases
 				do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ] ]
+]
+
+{ #category : #'*GtKanban' }
+LePageType >> initialize [
+super initialize.
+self pageTypeRepo
 ]
 
 { #category : #'*GtKanban' }

@@ -93,7 +93,8 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 	self page announcer weak
 		when: LeContentCommandExecutedAnnouncement
 		do: [ :anAnnouncement | 
-			(anAnnouncement command isKindOf: LeContentInsertChildSnippetCommand)
+			((anAnnouncement command isKindOf: LeContentInsertChildSnippetCommand)
+				and: [ anAnnouncement result insertedSnippet isKindOf: LeElementSnippet ])
 				ifTrue: [ | snippetsInUI previousSnippet |
 					snippetsInUI := (aGrid query // LeSnippetContainerElement) result
 							collect: [ :each | each children first snippetViewModel snippetModel ].
@@ -285,7 +286,11 @@ LeSlideshowPageElement >> slidesGrid [
 		columnCount: self columnCount;
 		cellSpacing: 10;
 		addChildren: (self elementSnippets
-				collect: [ :aSnippet | self slideGridElementForSnippet: aSnippet ])
+				collect: [ :aSnippet | 
+					aSnippet
+						codeHeight: 200;
+						elementHeight: 200.
+					self slideGridElementForSnippet: aSnippet ])
 ]
 
 { #category : #ui }
@@ -319,7 +324,11 @@ LeSlideshowPageElement >> slidesList [
 	self onSnippetRemoved: aVerticalPane.
 	^ aVerticalPane
 		addChildren: (self elementSnippets
-				collect: [ :aSnippet | self slideListElementForSnippet: aSnippet ]);
+				collect: [ :aSnippet | 
+					aSnippet
+						codeHeight: 200;
+						elementHeight: 200.
+					self slideListElementForSnippet: aSnippet ]);
 		asScrollableElement
 ]
 
