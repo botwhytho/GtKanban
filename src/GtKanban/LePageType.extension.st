@@ -76,7 +76,10 @@ LePageType class >> initialize [
 		ifFalse: [ self leJsonV4MappingFor: LeJsonV4 uniqueInstance newWriter.
 			self leJsonV4MappingFor: LeJsonV4 uniqueInstance newReader.
 			LeDatabasesRegistry defaultLogicalDatabase databases
-				do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ] ]
+				do: [ :aDatabase | aDatabase pagesByType at: self ifAbsentPut: [ GtStringContentDictionary new ] ].
+				NonInteractiveTranscript stdout
+						crShow: self name;
+						cr ]
 ]
 
 { #category : #'*GtKanban' }
