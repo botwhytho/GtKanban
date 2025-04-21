@@ -37,7 +37,7 @@ LeSlideshowPageElement class >> slideTemplates [
 		ifNil: [ | stream |
 			stream := (#gtSlide gtReferences
 					& (DemoSlideshow gtMethodsInClass | #gtExample gtPragmas)) asAsyncStream
-					map: [ :each | each -> self slidePreviewForTemplate: each ].
+					map: [ :each | each -> (self slidePreviewForTemplate: each) ].
 			slideTemplates := stream cached ]
 		ifNotNil: [ slideTemplates asyncSimilarCopy ]
 ]
