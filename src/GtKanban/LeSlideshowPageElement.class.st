@@ -93,10 +93,9 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 	self page announcer weak
 		when: LeContentTreeAdded
 		do: [ :anAnnouncement | 
-			( anAnnouncement result insertedSnippet isKindOf: LeElementSnippet )
+			(anAnnouncement content isKindOf: LeElementSnippet)
 				ifTrue: [ | snippetsInUI previousSnippet |
-					snippetsInUI := (aGrid query // LeSnippetContainerElement) result
-							collect: [ :each | each children first snippetViewModel snippetModel ].
+					snippetsInUI := (aGrid query // LeSnippetContainerElement) result.
 					previousSnippet := self
 							previousSnippetBeforeNewSnippet: snippetsInUI
 							inPage: self elementSnippets.
@@ -163,8 +162,10 @@ LeSlideshowPageElement >> playSlideshowButton [
 ]
 
 { #category : #ui }
-LeSlideshowPageElement >> previousSnippetBeforeNewSnippet: snippetsInUI inPage: pageSnippets [
-	| snippetsInUIStream pageSnippetsStream previousSnippet currentSnippet newSnippet |
+LeSlideshowPageElement >> previousSnippetBeforeNewSnippet: snippetElementsInUI inPage: pageSnippets [
+	| snippetsInUIStream snippetsInUI pageSnippetsStream previousSnippet currentSnippet newSnippet |
+	snippetsInUI := snippetElementsInUI
+			collect: [ :each | each -> each children first snippetViewModel snippetModel ].
 	snippetsInUIStream := snippetsInUI readStream.
 	pageSnippetsStream := pageSnippets readStream.
 	previousSnippet := nil.
@@ -172,11 +173,14 @@ LeSlideshowPageElement >> previousSnippetBeforeNewSnippet: snippetsInUI inPage: 
 	newSnippet := nil.
 	[ previousSnippet := currentSnippet.
 	currentSnippet := snippetsInUIStream next.
+	previousSnippet ifNil: [ previousSnippet := currentSnippet ].
 	newSnippet := pageSnippetsStream next.
-	currentSnippet = newSnippet and: [ snippetsInUIStream atEnd not ] ].
+	currentSnippet value = newSnippet and: [ snippetsInUIStream atEnd not ] ]
+		whileTrue.
+	self flag: #TODO.	"REALLY clean up this code. Probably use wrapper classes for the snippet elements to keep them clean."
 	^ currentSnippet = newSnippet
-		ifTrue: [ currentSnippet ]
-		ifFalse: [ previousSnippet ]
+		ifTrue: [ currentSnippet key parent ]
+		ifFalse: [ previousSnippet key parent ]
 ]
 
 { #category : #ui }
