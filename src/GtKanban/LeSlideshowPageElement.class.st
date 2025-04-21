@@ -91,10 +91,9 @@ LeSlideshowPageElement >> initialize [
 { #category : #ui }
 LeSlideshowPageElement >> onSnippetAdded: aGrid [
 	self page announcer weak
-		when: LeContentCommandExecutedAnnouncement
+		when: LeContentTreeAdded
 		do: [ :anAnnouncement | 
-			((anAnnouncement command isKindOf: LeContentInsertChildSnippetCommand)
-				and: [ anAnnouncement result insertedSnippet isKindOf: LeElementSnippet ])
+			( anAnnouncement result insertedSnippet isKindOf: LeElementSnippet )
 				ifTrue: [ | snippetsInUI previousSnippet |
 					snippetsInUI := (aGrid query // LeSnippetContainerElement) result
 							collect: [ :each | each children first snippetViewModel snippetModel ].
@@ -103,7 +102,7 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 							inPage: self elementSnippets.
 					self flag: #TODO.	"How to define the correct element creation logic depending on the view we are in. Maybe create classes and have logic there?"
 					aGrid
-						addChild: (self slideGridElementForSnippet: anAnnouncement result insertedSnippet)
+						addChild: (self slideGridElementForSnippet: anAnnouncement content)
 						after: previousSnippet ] ]
 ]
 
