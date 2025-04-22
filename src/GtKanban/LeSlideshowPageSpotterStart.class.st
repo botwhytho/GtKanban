@@ -1,21 +1,8 @@
 Class {
 	#name : #LeSlideshowPageSpotterStart,
 	#superclass : #Object,
-	#instVars : [
-		'database'
-	],
 	#category : #'GtKanban-Spotter'
 }
-
-{ #category : #accessing }
-LeSlideshowPageSpotterStart >> database [
-	^ database
-]
-
-{ #category : #accessing }
-LeSlideshowPageSpotterStart >> database: anObject [
-	database := anObject
-]
 
 { #category : #printing }
 LeSlideshowPageSpotterStart >> gtDisplayOn: aStream [
@@ -30,8 +17,11 @@ LeSlideshowPageSpotterStart >> gtNewSnippetFor: aSearch [
 		title: 'Add Slide to Page';
 		priority: 1;
 		items: [" LeContextMenuSnippetItemsCollector new 
-			collectMenuItems" {LeContextMenuItemSpecification new title: 'Element Snippet'; snippetClass: LeElementSnippet} ];
-		itemName: #title;
+			collectMenuItems" "{LeContextMenuItemSpecification new title: 'Element Snippet'; snippetClass: LeElementSnippet}"
+			LeSlideshowPageElement slideTemplates
+			 ];
+		itemName: #key;
+		previewElement: [:each | each value create ];
 		filterBySubstring;
 		withoutCategoryAction;
 		withoutItemsLimit;

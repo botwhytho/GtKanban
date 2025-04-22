@@ -16,6 +16,14 @@ Class {
 	#category : #'GtKanban-UI'
 }
 
+{ #category : #accessing }
+LeSlideshowPageElement class >> demoSlides [
+	"#gtSlide gtReferences
+		& (DemoSlideshow gtMethodsInClass | #gtExample gtPragmas)"
+
+	^ DemoSlideshow new slidePriorities collect: [ :each | DemoSlideshow >> each ]
+]
+
 { #category : #initialization }
 LeSlideshowPageElement class >> page: aLePage [
 	^ self basicNew
@@ -44,9 +52,16 @@ LeSlideshowPageElement class >> slidePreviewForTemplate: aMethod [
 LeSlideshowPageElement class >> slideTemplates [
 	^ slideTemplates
 		ifNil: [ | stream |
-			stream := (#gtSlide gtReferences
-					& (DemoSlideshow gtMethodsInClass | #gtExample gtPragmas)) asAsyncStream
-					map: [ :each | each -> (self slidePreviewForTemplate: each) ].
+			stream := self demoSlides asAsyncStream
+					map: [ :each | 
+						each
+							-> (BrValuableStencil
+									from: [ BrVerticalPane new matchParent
+											addChildren: {BlTextElement
+														text: ((each pragmaAt: #text:)
+																ifNil: [ '' ]
+																ifNotNil: [ :aPragma | aPragma arguments first ]) asRopedText.
+													each asScalableSlide create} ]) ].
 			slideTemplates := stream cached ]
 		ifNotNil: [ slideTemplates asyncSimilarCopy ]
 ]
