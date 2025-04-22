@@ -18,7 +18,7 @@ LeSlideshowPageSnippetExpandableAptitude >> newAddSnippetDropdown [
 					background: BrGlamorousColors secondaryHeaderBackgroundColor ]
 			content: [
 				GtSpotterDropdownButtonStencil new
-					valuable: (LeContextMenuSpotterStart new 
+					valuable: (LeSlideshowPageSpotterStart new 
 						database: widget database);
 					extent: [ 800 @ 600 ];
 					spotterModelDo: [ :aSpotter |
