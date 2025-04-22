@@ -107,5 +107,5 @@ LeSlideshowPageType >> samplePage [
 
 { #category : #ui }
 LeSlideshowPageType >> tool [
-	^ LeSlideshowPageElement new page: self page
+	^ LeSlideshowPageElement page: self page
 ]

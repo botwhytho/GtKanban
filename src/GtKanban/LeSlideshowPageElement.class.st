@@ -1,18 +1,27 @@
 Class {
 	#name : #LeSlideshowPageElement,
-	#superclass : #BrVerticalPane,
+	#superclass : #BrHorizontalPane,
 	#traits : 'TGtAnnouncer',
 	#classTraits : 'TGtAnnouncer classTrait',
 	#instVars : [
 		'columnCount',
 		'announcer',
-		'page'
+		'page',
+		'slidesGridTool',
+		'slidesDetailTool'
 	],
 	#classInstVars : [
 		'slideTemplates'
 	],
 	#category : #'GtKanban-UI'
 }
+
+{ #category : #initialization }
+LeSlideshowPageElement class >> page: aLePage [
+	^ self basicNew
+		page: aLePage;
+		initialize
+]
 
 { #category : #accessing }
 LeSlideshowPageElement class >> slidePreviewForTemplate: aMethod [
@@ -106,17 +115,17 @@ LeSlideshowPageElement >> initialize [
 	self
 		id: #slideshowPageTool;
 		matchParent;
+		addChildren: {slidesDetailTool := self slidesDetailTool.
+				slidesGridTool := self slidesGridTool};
 		addAptitude: (GtPhlowToolDetailAptitude new
 				normal: [ :aStyle | 
 					aStyle
-						do: [ self
-								removeChildren;
-								addChild: self slidesGridTool ] ];
+						do: [ slidesDetailTool visibility: BlVisibility gone.
+							slidesGridTool visibility: BlVisibility visible ] ];
 				detailed: [ :aStyle | 
 					aStyle
-						do: [ self
-								removeChildren;
-								addChild: self slidesDetailTool ] ])
+						do: [ slidesDetailTool visibility: BlVisibility visible.
+							slidesGridTool visibility: BlVisibility gone ] ])
 ]
 
 { #category : #ui }
@@ -296,12 +305,12 @@ LeSlideshowPageElement >> slideListElementForSnippet: aSnippet [
 						result first snippetViewModel snippetModel.
 				expandedSnippet := (parentTool children second query
 						// LeElementSnippetElement) result first snippetViewModel snippetModel.
-				clickedSnipet = expandedSnippet
-					ifFalse: [ parentTool
+				"clickedSnipet = expandedSnippet
+					ifFalse: [" parentTool
 							replaceChild: parentTool children second
 							with: (self slideDetailElementFor: clickedSnipet inParentTool: parentTool).
 							parentTool enqueueTask: [ (parentTool children second query
-						// #'source-coder--editor') result first requestFocus] asBlTask. ] ];
+						// #'source-coder--editor') result first requestFocus] asBlTask. "]" ];
 		when: BlMouseLeaveEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
@@ -370,6 +379,18 @@ LeSlideshowPageElement >> slidesList [
 			constraintsDo: [ :c | c linear weight: 1 ];
 			cellSpacing: 10.
 	self onSnippetRemoved: aVerticalPane.
+	self page announcer weak
+		when: LeContentTreeChanged
+		do: [ :anEvent | 
+			anEvent content = self page
+				ifTrue: [ | slideElements |
+					slideElements := aVerticalPane children
+							groupedBy: [ :each | 
+								(each query // LeElementSnippetElement) result first snippetViewModel
+									snippetModel uid ].
+					aVerticalPane removeChildren.
+					self elementSnippets
+						do: [ :each | aVerticalPane addChild: (slideElements at: each uid) first ] ] ].
 	^ aVerticalPane
 		addChildren: (self elementSnippets
 				collect: [ :aSnippet | 
