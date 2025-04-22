@@ -274,26 +274,39 @@ LeSlideshowPageElement >> slideGridElementForSnippet: aSnippet [
 
 { #category : #ui }
 LeSlideshowPageElement >> slideListElementForSnippet: aSnippet [
-	^ BrFrame new
+	| aFrame |
+	aFrame := BrFrame new.
+	^ aFrame
 		matchParent;
+		preventChildrenMouseEvents;
 		addAptitude: BrShadowAptitude new
 				+ (BrGlamorousSlideExteriorAptitude new
 						backgroundPaint: Color white;
 						borderPaint: Color transparent);
-		when: BlDoubleClickEvent
+		when: BlClickEvent
 			do: [ :anEvent | 
-				| parentTool |
+				| clickedSnipet expandedSnippet parentTool |
 				anEvent consumed: true.
+				aFrame allowChildrenMouseEvents.
 				parentTool := anEvent currentTarget
 						allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
 						ifFound: #yourself
 						ifNone: [ nil ].
-				parentTool
-					replaceChild: parentTool children second
-					with: (self
-							slideDetailElementFor: (anEvent currentTarget query // LeElementSnippetElement) result first
-									snippetViewModel snippetModel
-							inParentTool: parentTool) ];
+				clickedSnipet := (anEvent currentTarget query // LeElementSnippetElement)
+						result first snippetViewModel snippetModel.
+				expandedSnippet := (parentTool children second query
+						// LeElementSnippetElement) result first snippetViewModel snippetModel.
+				clickedSnipet = expandedSnippet
+					ifFalse: [ parentTool
+							replaceChild: parentTool children second
+							with: (self slideDetailElementFor: clickedSnipet inParentTool: parentTool).
+							parentTool enqueueTask: [ (parentTool children second query
+						// #'source-coder--editor') result first requestFocus] asBlTask. ] ];
+		when: BlMouseLeaveEvent
+			do: [ :anEvent | 
+				anEvent consumed: true.
+				aFrame hasFocus ifTrue: [ aFrame loseFocus ].
+				aFrame preventChildrenMouseEvents ];
 		addChild: (aSnippet asSlideshowPageElement
 				in: [ :aLeSnippetContainerElement | 
 					aLeSnippetContainerElement children first hideCoder.
