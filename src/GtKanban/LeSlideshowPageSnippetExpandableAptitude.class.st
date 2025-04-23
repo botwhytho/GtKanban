@@ -26,7 +26,7 @@ LeSlideshowPageSnippetExpandableAptitude >> newAddSnippetDropdown [
 							| elementSnippet |
 							elementSnippet := LeElementSnippet new
 									uid: LeUID new;
-									code: (OSPlatform current lineEnding join: aMenuItem key sourceCode lines allButFirst).
+									code: (self rewriteMethod: aMenuItem key).
 							self widget snippetViewModel snippetModel
 								addSnippetAfterSelf: elementSnippet.
 							anActOnEvent beActed ];
@@ -34,4 +34,33 @@ LeSlideshowPageSnippetExpandableAptitude >> newAddSnippetDropdown [
 				containerDo: [ :aMenuContainer | aMenuContainer background: BrGlamorousColors secondaryHeaderBackgroundColor ])
 				doNotHideWidget.
 	^ aButton
+]
+
+{ #category : #converting }
+LeSlideshowPageSnippetExpandableAptitude >> rewriteMethod: aMethod [
+	| anAst slideText |
+	anAst := aMethod ast veryDeepCopy.
+	anAst body
+		addNodeFirst: (RBParser
+				parseExpression: '| aSlide| aSlide := GtProtoLiveSlide new.
+	aDemo := DemoSlideshow new.').
+	slideText := anAst
+			pragmaNamed: #text:
+			ifPresent: [ :aPragma | aPragma arguments first value ]
+			ifAbsent: [ nil ].
+	slideText
+		ifNotNil: [ anAst body
+				addNodeFirst: (RBParser
+						parseExpression: '"' , anAst method methodClass name , ' >> ' , '#' , anAst method selector
+								, ' | ' , slideText , '"') ].
+	anAst removePragmaNamed: #text:.
+	anAst removePragmaNamed: #gtSlide.
+	anAst allChildren
+		select: [ :aNode | (aNode isKindOf: RBVariableNode) and: [ aNode isSelfVariable ] ]
+		thenDo: [ :aNode | anAst replaceNode: aNode withNode: (RBParser parseExpression: 'aDemo') ].
+	^ (((anAst newSource lines allButFirst
+		reject: [ :each | (each includesSubstring: 'setPriority;') or: [ each includesSubstring: '	.	"' ] ])
+		joinUsing: String cr) copyReplaceAll: 'self' with: 'aDemo')
+		copyReplaceAll: '^'
+		with: ''
 ]
