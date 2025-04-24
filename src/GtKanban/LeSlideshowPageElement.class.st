@@ -103,15 +103,19 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 		when: LeContentTreeAdded
 		do: [ :anAnnouncement | 
 			(anAnnouncement content isKindOf: LeElementSnippet)
-				ifTrue: [ | snippetsInUI previousSnippet |
+				ifTrue: [  "| snippetsInUI previousSnippet |
 					snippetsInUI := (aGrid query // LeSnippetContainerElement) result.
 					previousSnippet := self
 							previousSnippetBeforeNewSnippet: snippetsInUI
 							inPage: self elementSnippets.
-					self flag: #TODO.	"How to define the correct element creation logic depending on the view we are in. Maybe create classes and have logic there?"
 					aGrid
 						addChild: (self slideGridElementForSnippet: anAnnouncement content)
-						after: previousSnippet ] ]
+						after: previousSnippet"| indexOfNewSnippet pageSnippets |
+					pageSnippets := self page type elementSnippets.
+					indexOfNewSnippet := pageSnippets indexOf: anAnnouncement content.
+					aGrid
+						addChild: (aGrid children first class fromSnippet: anAnnouncement content)
+						at: indexOfNewSnippet ] ]
 ]
 
 { #category : #ui }
@@ -290,6 +294,7 @@ LeSlideshowPageElement >> slidesList [
 			vFitContent;
 			constraintsDo: [ :c | c linear weight: 1 ];
 			cellSpacing: 10.
+	self onSnippetAdded: aVerticalPane.
 	self onSnippetRemoved: aVerticalPane.
 	self page announcer weak
 		when: LeContentTreeChanged
