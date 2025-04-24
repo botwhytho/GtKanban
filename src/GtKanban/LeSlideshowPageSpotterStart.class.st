@@ -12,16 +12,12 @@ LeSlideshowPageSpotterStart >> gtDisplayOn: aStream [
 { #category : #searching }
 LeSlideshowPageSpotterStart >> gtNewSnippetFor: aSearch [
 	<gtSearch>
-	
 	^ aSearch list
 		title: 'Add Slide to Page';
 		priority: 1;
-		items: [" LeContextMenuSnippetItemsCollector new 
-			collectMenuItems" "{LeContextMenuItemSpecification new title: 'Element Snippet'; snippetClass: LeElementSnippet}"
-			LeSlideshowPageElement slideTemplates
-			 ];
-		itemName: #key;
-		previewElement: [:each | each value create ];
+		items: [ LeSlideshowNewSlideItemSpecification emptySlideAndTemplates ];
+		itemName: #title;
+		previewElement: #preview;
 		filterBySubstring;
 		withoutCategoryAction;
 		withoutItemsLimit;

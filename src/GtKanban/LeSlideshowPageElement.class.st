@@ -10,60 +10,14 @@ Class {
 		'slidesGridTool',
 		'slidesDetailTool'
 	],
-	#classInstVars : [
-		'slideTemplates'
-	],
 	#category : #'GtKanban-UI'
 }
-
-{ #category : #accessing }
-LeSlideshowPageElement class >> demoSlides [
-	"#gtSlide gtReferences
-		& (DemoSlideshow gtMethodsInClass | #gtExample gtPragmas)"
-
-	^ DemoSlideshow new slidePriorities collect: [ :each | DemoSlideshow >> each ]
-]
 
 { #category : #initialization }
 LeSlideshowPageElement class >> page: aLePage [
 	^ self basicNew
 		page: aLePage;
 		initialize
-]
-
-{ #category : #accessing }
-LeSlideshowPageElement class >> slidePreviewForTemplate: aMethod [
-	| aSlide anObject |
-	anObject := aMethod methodClass new.
-	[ aSlide := thisContext
-			object: anObject
-			perform: aMethod selector
-			withArguments: {GtEmptySlide new}
-			inClass: anObject class ]
-		on: Error
-		do: [ :anException | 
-			aSlide := GtLiveSlideWithError new
-					definingMethod: (anObject class >> aMethod) asRingDefinition;
-					error: anException ].
-	^ aSlide
-]
-
-{ #category : #accessing }
-LeSlideshowPageElement class >> slideTemplates [
-	^ slideTemplates
-		ifNil: [ | stream |
-			stream := self demoSlides asAsyncStream
-					map: [ :each | 
-						each
-							-> (BrValuableStencil
-									from: [ BrVerticalPane new matchParent
-											addChildren: {BlTextElement
-														text: ((each pragmaAt: #text:)
-																ifNil: [ '' ]
-																ifNotNil: [ :aPragma | aPragma arguments first ]) asRopedText.
-													each asScalableSlide create} ]) ].
-			slideTemplates := stream cached ]
-		ifNotNil: [ slideTemplates asyncSimilarCopy ]
 ]
 
 { #category : #announcer }
