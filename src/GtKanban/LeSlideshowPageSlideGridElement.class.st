@@ -16,6 +16,10 @@ LeSlideshowPageSlideGridElement >> initialize [
 	self
 		vFitContent;
 		hMatchParent;
+		addAptitude: BrShadowAptitude new
+				+ (BrGlamorousSlideExteriorAptitude new
+						backgroundPaint: Color white;
+						borderPaint: Color transparent);
 		when: BlMouseLeaveEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.

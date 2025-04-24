@@ -18,10 +18,6 @@ LeSlideshowPageSlideElement class >> forSnippet: aLeElementSnippet [
 LeSlideshowPageSlideElement >> initialize [
 	super initialize.
 	self
-		addAptitude: BrShadowAptitude new
-				+ (BrGlamorousSlideExteriorAptitude new
-						backgroundPaint: Color white;
-						borderPaint: Color transparent);
 		addChild: (self snippet
 				elementHeight: 200;
 				codeHeight: 200;

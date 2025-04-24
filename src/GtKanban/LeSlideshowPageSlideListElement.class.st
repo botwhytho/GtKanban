@@ -10,54 +10,30 @@ LeSlideshowPageSlideListElement >> initialize [
 	self
 		matchParent;
 		preventChildrenMouseEvents;
+		addAptitude: BrShadowAptitude new
+				+ (BrGlamorousSlideExteriorAptitude new
+						backgroundPaint: Color white;
+						borderPaint: Color transparent);
 		when: BlClickEvent
 			do: [ :anEvent | 
-				| "clickedSnipet" "expandedSnippet" parentTool |
+				| parentContainer |
 				anEvent consumed: true.
 				self allowChildrenMouseEvents.
-				parentTool := anEvent currentTarget
+				parentContainer := anEvent currentTarget
 						allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
-						ifFound: #yourself
+						ifFound: [ :found | found children second ]
 						ifNone: [ nil ].
-				"clickedSnipet := (anEvent currentTarget query // LeElementSnippetElement)
-						result first snippetViewModel snippetModel."
-				"expandedSnippet := (parentTool children second query
-						// LeElementSnippetElement) result first snippetViewModel snippetModel."
-				parentTool
-					replaceChild: parentTool children second
-					with: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet)"(self slideDetailElementFor: clickedSnipet inParentTool: parentTool)".
-				"parentTool
-					enqueueTask: [ (parentTool children second query // #'source-coder--editor') result first
-							requestFocus ] asBlTask" ];
+
+				parentContainer children
+					ifEmpty: [ parentContainer
+							addChild: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet) ]
+					ifNotEmpty: [ parentContainer
+							replaceChild: parentContainer children first
+							with: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet) ] ];
 		when: BlMouseLeaveEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
 				self hasFocus ifTrue: [ self loseFocus ].
 				self preventChildrenMouseEvents ].
 	(self query // LeElementSnippetElement) result first hideCoder
-]
-
-{ #category : #ui }
-LeSlideshowPageSlideListElement >> slideDetailElementFor: aSnippet inParentTool: parentTool [
-	| aFrame |
-	aFrame := BrFrame new
-			padding: (BlInsets all: 10);
-			matchParent;
-			constraintsDo: [ :c | c linear weight: 4 ];
-			addAptitude: BrShadowAptitude new
-					+ (BrGlamorousSlideExteriorAptitude new
-							backgroundPaint: Color white;
-							borderPaint: Color transparent).
-	self onSnippetRemoved: aFrame.
-	"aFrame
-		enqueueTask: [ | aLeSnippetContainerElement |
-			aLeSnippetContainerElement := aSnippet asSlideshowPageElement.
-			aLeSnippetContainerElement children first
-				updateCoderHeightTo: parentTool extent y * 0.25;
-				updateElementHeightTo: parentTool extent y * 0.70.
-			aFrame
-				addChild: (BrFrame new
-						matchParent;
-						addChild: aLeSnippetContainerElement) ] asBlTask."
-	^ aFrame addChild: (LeSlideshowPageSlideListDetailElement forSnippet: aSnippet)
 ]

@@ -14,11 +14,10 @@ LeSlideshowPageSlideListDetailElement >> initialize [
 			do: [ :anEvent | 
 				| snippetElement |
 				anEvent consumed: true.
-				anEvent logToNamed: 'Testing'.
-				snippetElement := anEvent currentTarget children first.
+				snippetElement := anEvent currentTarget children first children first.
 				snippetElement
-					updateCoderHeightTo: snippetElement parent extent y * 0.25;
-					updateElementHeightTo: snippetElement parent extent y * 0.70	"parent"	"parent" ].
+					updateCoderHeightTo: snippetElement parent parent extent y * 0.25;
+					updateElementHeightTo: snippetElement parent parent extent y * 0.70 ].
 	self snippet page announcer weak
 		when: LeContentCommandExecutedAnnouncement
 		do: [ :anAnnouncement | 
@@ -26,6 +25,5 @@ LeSlideshowPageSlideListDetailElement >> initialize [
 				and: [ (anAnnouncement command childSnippet isKindOf: LeElementSnippet)
 						and: [ anAnnouncement command childSnippet = self snippet ] ])
 				ifTrue: [ self removeFromParent ] ].
-	(self query // #'source-coder--editor') result first
-							requestFocus
+	(self query // #'source-coder--editor') result first requestFocus
 ]
