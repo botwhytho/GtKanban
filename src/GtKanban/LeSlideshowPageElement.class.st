@@ -353,8 +353,8 @@ LeSlideshowPageElement >> slidesList [
 	self onSnippetRemoved: aVerticalPane.
 	self page announcer weak
 		when: LeContentTreeChanged
-		do: [ :anEvent |
-			anEvent logToNamed: 'Slides'. 
+		do: [ :anEvent | 
+			anEvent logToNamed: 'Slides'.
 			anEvent content = self page
 				ifTrue: [ | slideElements |
 					slideElements := aVerticalPane children
@@ -366,11 +366,7 @@ LeSlideshowPageElement >> slidesList [
 						do: [ :each | aVerticalPane addChild: (slideElements at: each uid) first ] ] ].
 	^ aVerticalPane
 		addChildren: (self elementSnippets
-				collect: [ :aSnippet | 
-					aSnippet
-						codeHeight: 200;
-						elementHeight: 200.
-					self slideListElementForSnippet: aSnippet ]);
+				collect: [ :aSnippet | LeSlideshowPageSlideListElement forSnippet: aSnippet ]);
 		asScrollableElement
 ]
 
