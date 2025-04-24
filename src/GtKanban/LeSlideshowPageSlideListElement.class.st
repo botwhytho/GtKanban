@@ -34,7 +34,7 @@ LeSlideshowPageSlideListElement >> initialize [
 				anEvent consumed: true.
 				self hasFocus ifTrue: [ self loseFocus ].
 				self preventChildrenMouseEvents ].
-	self children first hideCoder
+	(self query // LeElementSnippetElement) result first hideCoder
 ]
 
 { #category : #ui }
@@ -54,7 +54,7 @@ LeSlideshowPageSlideListElement >> slideDetailElementFor: aSnippet inParentTool:
 			aLeSnippetContainerElement := aSnippet asSlideshowPageElement.
 			aLeSnippetContainerElement children first
 				updateCoderHeightTo: parentTool extent y * 0.25;
-				updateElementHeightTo: parentTool extent y * 0.65.
+				updateElementHeightTo: parentTool extent y * 0.70.
 			aFrame
 				addChild: (BrFrame new
 						matchParent;
