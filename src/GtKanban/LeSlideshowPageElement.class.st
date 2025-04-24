@@ -103,25 +103,17 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 		when: LeContentTreeAdded
 		do: [ :anAnnouncement | 
 			(anAnnouncement content isKindOf: LeElementSnippet)
-				ifTrue: [  "| snippetsInUI previousSnippet |
-					snippetsInUI := (aGrid query // LeSnippetContainerElement) result.
-					previousSnippet := self
-							previousSnippetBeforeNewSnippet: snippetsInUI
-							inPage: self elementSnippets.
-					aGrid
-						addChild: (self slideGridElementForSnippet: anAnnouncement content)
-						after: previousSnippet"| indexOfNewSnippet pageSnippets |
+				ifTrue: [ | indexOfNewSnippet pageSnippets |
 					pageSnippets := self page type elementSnippets.
 					indexOfNewSnippet := pageSnippets indexOf: anAnnouncement content.
 					aGrid
-						addChild: (aGrid children first class fromSnippet: anAnnouncement content)
+						addChild: (aGrid children first class forSnippet: anAnnouncement content)
 						at: indexOfNewSnippet ] ]
 ]
 
 { #category : #ui }
 LeSlideshowPageElement >> onSnippetRemoved: aGrid [
-	self flag: #TODO. "Probably better to use LeContentTreeRemoved"
-	self page announcer weak
+	self flag: #TODO.	"Probably better to use LeContentTreeRemoved"	"	self page announcer weak
 		when: LeContentCommandExecutedAnnouncement
 		do: [ :anAnnouncement | 
 			((anAnnouncement command isKindOf: LeContentRemoveChildSnippetCommand)
@@ -130,7 +122,14 @@ LeSlideshowPageElement >> onSnippetRemoved: aGrid [
 						detect: [ :each | 
 							each children first snippetViewModel snippetModel
 								= anAnnouncement command childSnippet ]
-						ifFound: [ :found | aGrid removeChild: found parent ] ] ]
+						ifFound: [ :found | aGrid removeChild: found parent ] ] ]"
+	self page announcer weak
+		when: LeContentTreeRemoved
+		do: [ :anAnnouncement | 
+			(anAnnouncement content isKindOf: LeElementSnippet)
+				ifTrue: [ aGrid children
+						detect: [ :each | each snippet = anAnnouncement content ]
+						ifFound: [ :found | aGrid removeChild: found ] ] ]
 ]
 
 { #category : #accessing }
@@ -232,19 +231,22 @@ LeSlideshowPageElement >> slideGridElementForSnippet: aSnippet [
 
 { #category : #ui }
 LeSlideshowPageElement >> slidesDetailTool [
-	| pane |
+	| pane slideDetailContainer |
 	pane := BrHorizontalPane new
 			id: #slidesDetailTool;
 			matchParent.
+	slideDetailContainer := BrVerticalPane new
+			padding: (BlInsets all: 10);
+			matchParent;
+			alignCenter;
+			constraintsDo: [ :c | c linear weight: 4 ];
+			addChild: (BlTextElement
+					text: ('Select a slide to work on' asRopedText foreground: Color lightGray)).
+	self onSnippetRemoved: slideDetailContainer.
+
 	^ pane
 		addChildren: {self slidesList.
-				BrVerticalPane new
-					padding: (BlInsets all: 10);
-					matchParent;
-					alignCenter;
-					constraintsDo: [ :c | c linear weight: 4 ];
-					addChild: (BlTextElement
-							text: ('Select a slide to work on' asRopedText foreground: Color lightGray))}
+				slideDetailContainer}
 ]
 
 { #category : #ui }
@@ -299,13 +301,10 @@ LeSlideshowPageElement >> slidesList [
 	self page announcer weak
 		when: LeContentTreeChanged
 		do: [ :anEvent | 
-			anEvent logToNamed: 'Slides'.
 			anEvent content = self page
 				ifTrue: [ | slideElements |
 					slideElements := aVerticalPane children
-							groupedBy: [ :each | 
-								(each query // LeElementSnippetElement) result first snippetViewModel
-									snippetModel uid ].
+							groupedBy: [ :each | each snippet uid ].
 					aVerticalPane removeChildren.
 					self elementSnippets
 						do: [ :each | aVerticalPane addChild: (slideElements at: each uid) first ] ] ].
