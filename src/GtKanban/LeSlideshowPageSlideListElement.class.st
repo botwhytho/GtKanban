@@ -49,7 +49,7 @@ LeSlideshowPageSlideListElement >> slideDetailElementFor: aSnippet inParentTool:
 							backgroundPaint: Color white;
 							borderPaint: Color transparent).
 	self onSnippetRemoved: aFrame.
-	aFrame
+	"aFrame
 		enqueueTask: [ | aLeSnippetContainerElement |
 			aLeSnippetContainerElement := aSnippet asSlideshowPageElement.
 			aLeSnippetContainerElement children first
@@ -58,6 +58,6 @@ LeSlideshowPageSlideListElement >> slideDetailElementFor: aSnippet inParentTool:
 			aFrame
 				addChild: (BrFrame new
 						matchParent;
-						addChild: aLeSnippetContainerElement) ] asBlTask.
-	^ aFrame
+						addChild: aLeSnippetContainerElement) ] asBlTask."
+	^ aFrame addChild: (LeSlideshowPageSlideListDetailElement forSnippet: aSnippet)
 ]
