@@ -38,6 +38,14 @@ LeSlideshowPageSlideElement >> onSnippetRemoved: aGrid [
 ]
 
 { #category : #accessing }
+LeSlideshowPageSlideElement >> parentTool [
+	^ self
+		allParentsDetect: [ :each | each isKindOf: LeSlideshowPageElement ]
+		ifFound: #yourself
+		ifNone: [ nil ]
+]
+
+{ #category : #accessing }
 LeSlideshowPageSlideElement >> snippet [
 	^ snippet
 ]

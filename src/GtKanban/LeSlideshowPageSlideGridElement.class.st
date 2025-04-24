@@ -28,10 +28,7 @@ LeSlideshowPageSlideGridElement >> initialize [
 			do: [ :anEvent | 
 				anEvent consumed: true.
 				parentTool
-					ifNil: [ parentTool := self
-								allParentsDetect: [ :each | each isKindOf: LeSlideshowPageElement ]
-								ifFound: #yourself
-								ifNone: [ nil ].
+					ifNil: [ parentTool := self parentTool.
 						parentTool weak
 							when: GtSlidesGridShowMoreDetailEvent
 								do: [ :anAnnouncement | 
