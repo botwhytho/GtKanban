@@ -25,3 +25,49 @@ GtWorldSpotterSearchStart >> gtCreateNewCustomPageFor: aSearch [
 		withoutItemAction;
 		wantsToDisplayOnEmptyQuery: true
 ]
+
+{ #category : #'*GtKanban' }
+GtWorldSpotterSearchStart >> gtSearchPagesByTitleFor: aSearch [
+	<gtSearch>
+	self hasKnowledgeBase ifFalse: [ ^ aSearch empty ].
+	self hasChildren ifFalse: [ ^ aSearch empty ].
+
+	^ aSearch explicit
+		title: 'Named pages';
+		priority: 22;
+		search: [ :aContext | self knowledgeBase asyncPagesForWord: aContext searchQuery ];
+		previewElement: [:each| each type defaultPhlowTool asElement ];
+		itemName: #title;
+		wantsToDisplayOnEmptyQuery: false
+]
+
+{ #category : #'*GtKanban' }
+GtWorldSpotterSearchStart >> gtSpotterContainingSubPartsFor: aSearch [
+	<gtSearch>
+	self hasKnowledgeBase
+		ifFalse: [ ^ aSearch empty ].
+	self hasChildren
+		ifFalse: [ ^ aSearch empty ].
+	
+	^ aSearch explicit
+		priority: 23;
+		title: 'Page contents';
+		search: [ :aContext |
+			[
+			| filter results |
+			results := OrderedCollection new.
+			filter := LeSubstringFilter new
+				caseSensitive: false;
+				query: aContext searchQuery.
+			self knowledgeBase pagesWithNameDo: [ :eachPage |
+				(filter isMatchedItem: eachPage)
+					ifTrue: [ results add: eachPage ] ].
+			self knowledgeBase unnamedPagesDo: [ :eachPage |
+				(filter isMatchedItem: eachPage)
+					ifTrue: [ results add: eachPage ] ].
+			results asAsyncStream
+			] asAsyncFuture asAsyncStream flatten
+		];
+		previewElement: [:each| each type defaultPhlowTool asElement ];
+		itemName: #spotterItemName
+]
