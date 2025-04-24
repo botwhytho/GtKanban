@@ -116,6 +116,7 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 
 { #category : #ui }
 LeSlideshowPageElement >> onSnippetRemoved: aGrid [
+	self flag: #TODO. "Probably better to use LeContentTreeRemoved"
 	self page announcer weak
 		when: LeContentCommandExecutedAnnouncement
 		do: [ :anAnnouncement | 
@@ -313,10 +314,12 @@ LeSlideshowPageElement >> slidesGrid [
 		cellSpacing: 10;
 		addChildren: (self elementSnippets
 				collect: [ :aSnippet | 
-					aSnippet
+					"aSnippet
 						codeHeight: 200;
 						elementHeight: 200.
-					self slideGridElementForSnippet: aSnippet ])
+					self slideGridElementForSnippet: aSnippet"
+					LeSlideshowPageSlideGridElement forSnippet: aSnippet
+					 ])
 ]
 
 { #category : #ui }
@@ -350,7 +353,8 @@ LeSlideshowPageElement >> slidesList [
 	self onSnippetRemoved: aVerticalPane.
 	self page announcer weak
 		when: LeContentTreeChanged
-		do: [ :anEvent | 
+		do: [ :anEvent |
+			anEvent logToNamed: 'Slides'. 
 			anEvent content = self page
 				ifTrue: [ | slideElements |
 					slideElements := aVerticalPane children
