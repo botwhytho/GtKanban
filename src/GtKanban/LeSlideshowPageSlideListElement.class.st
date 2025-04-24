@@ -12,23 +12,23 @@ LeSlideshowPageSlideListElement >> initialize [
 		preventChildrenMouseEvents;
 		when: BlClickEvent
 			do: [ :anEvent | 
-				| clickedSnipet expandedSnippet parentTool |
+				| "clickedSnipet" "expandedSnippet" parentTool |
 				anEvent consumed: true.
 				self allowChildrenMouseEvents.
 				parentTool := anEvent currentTarget
 						allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
 						ifFound: #yourself
 						ifNone: [ nil ].
-				clickedSnipet := (anEvent currentTarget query // LeElementSnippetElement)
-						result first snippetViewModel snippetModel.
-				expandedSnippet := (parentTool children second query
-						// LeElementSnippetElement) result first snippetViewModel snippetModel.
+				"clickedSnipet := (anEvent currentTarget query // LeElementSnippetElement)
+						result first snippetViewModel snippetModel."
+				"expandedSnippet := (parentTool children second query
+						// LeElementSnippetElement) result first snippetViewModel snippetModel."
 				parentTool
 					replaceChild: parentTool children second
-					with: (self slideDetailElementFor: clickedSnipet inParentTool: parentTool).
-				parentTool
+					with: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet)"(self slideDetailElementFor: clickedSnipet inParentTool: parentTool)".
+				"parentTool
 					enqueueTask: [ (parentTool children second query // #'source-coder--editor') result first
-							requestFocus ] asBlTask	"]" ];
+							requestFocus ] asBlTask" ];
 		when: BlMouseLeaveEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
