@@ -1,11 +1,8 @@
 Class {
 	#name : #LeSlideshowPageElement,
 	#superclass : #BrHorizontalPane,
-	#traits : 'TGtAnnouncer',
-	#classTraits : 'TGtAnnouncer classTrait',
 	#instVars : [
 		'columnCount',
-		'announcer',
 		'page',
 		'slidesGridTool',
 		'slidesDetailTool'
@@ -45,12 +42,12 @@ LeSlideshowPageElement >> changeLayoutButton [
 					self columnCount: self detailedColumnCount.
 					(grid query // LeElementSnippetElement) result
 						do: [ :aSnippetElement | aSnippetElement showCoder ].
-					self announce: GtSlidesGridShowMoreDetailEvent new ]
+					self dispatchEvent: GtSlidesGridShowMoreDetailEvent new ]
 				ifFalse: [ grid columnCount: self summaryColumnCount.
 					self columnCount: self summaryColumnCount.
 					(grid query // LeElementSnippetElement) result
 						do: [ :aSnippetElement | aSnippetElement hideCoder ].
-					self announce: GtSlidesGridShowLessDetailEvent new ] ]
+					self dispatchEvent: GtSlidesGridShowLessDetailEvent new ] ]
 ]
 
 { #category : #accessing }
