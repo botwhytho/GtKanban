@@ -113,23 +113,16 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 
 { #category : #ui }
 LeSlideshowPageElement >> onSnippetRemoved: aGrid [
-	self flag: #TODO.	"Probably better to use LeContentTreeRemoved"	"	self page announcer weak
-		when: LeContentCommandExecutedAnnouncement
-		do: [ :anAnnouncement | 
-			((anAnnouncement command isKindOf: LeContentRemoveChildSnippetCommand)
-				and: [ anAnnouncement command childSnippet isKindOf: LeElementSnippet ])
-				ifTrue: [ (aGrid query // LeSnippetContainerElement) result
-						detect: [ :each | 
-							each children first snippetViewModel snippetModel
-								= anAnnouncement command childSnippet ]
-						ifFound: [ :found | aGrid removeChild: found parent ] ] ]"
 	self page announcer weak
 		when: LeContentTreeRemoved
 		do: [ :anAnnouncement | 
 			(anAnnouncement content isKindOf: LeElementSnippet)
 				ifTrue: [ aGrid children
-						detect: [ :each | each snippet = anAnnouncement content ]
-						ifFound: [ :found | aGrid removeChild: found ] ] ]
+						detect: [ :each | [ each snippet = anAnnouncement content ] on: MessageNotUnderstood do: [ false ] ]
+						ifFound: [ :found | 
+							(found isKindOf: LeSlideshowPageSlideListDetailElement)
+								ifTrue: [ aGrid replaceChild: found with: self placeholderElement ]
+								ifFalse: [ aGrid removeChild: found ] ] ] ]
 ]
 
 { #category : #accessing }
@@ -140,6 +133,12 @@ LeSlideshowPageElement >> page [
 { #category : #accessing }
 LeSlideshowPageElement >> page: aLePge [
 	page := aLePge
+]
+
+{ #category : #ui }
+LeSlideshowPageElement >> placeholderElement [
+	^ BlTextElement
+		text: ('Select a slide to work on' asRopedText foreground: Color lightGray)
 ]
 
 { #category : #ui }
@@ -240,8 +239,7 @@ LeSlideshowPageElement >> slidesDetailTool [
 			matchParent;
 			alignCenter;
 			constraintsDo: [ :c | c linear weight: 4 ];
-			addChild: (BlTextElement
-					text: ('Select a slide to work on' asRopedText foreground: Color lightGray)).
+			addChild: self placeholderElement.
 	self onSnippetRemoved: slideDetailContainer.
 
 	^ pane
@@ -294,8 +292,13 @@ LeSlideshowPageElement >> slidesList [
 	aVerticalPane := BrVerticalPane new
 			hMatchParent;
 			vFitContent;
+			padding: (BlInsets all: 10);
 			constraintsDo: [ :c | c linear weight: 1 ];
-			cellSpacing: 10.
+			cellSpacing: 10;
+			addAptitude: BrShadowAptitude new
+				+ (BrGlamorousSlideExteriorAptitude new
+						backgroundPaint: Color white;
+						borderPaint: Color transparent).
 	self onSnippetAdded: aVerticalPane.
 	self onSnippetRemoved: aVerticalPane.
 	self page announcer weak
