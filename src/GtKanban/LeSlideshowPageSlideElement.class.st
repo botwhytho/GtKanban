@@ -2,8 +2,7 @@ Class {
 	#name : #LeSlideshowPageSlideElement,
 	#superclass : #BrFrame,
 	#instVars : [
-		'snippet',
-		'versionNumber'
+		'snippet'
 	],
 	#category : #'GtKanban-UI'
 }
@@ -15,49 +14,24 @@ LeSlideshowPageSlideElement class >> forSnippet: aLeElementSnippet [
 		initialize
 ]
 
-{ #category : #accessing }
-LeSlideshowPageSlideElement >> bumpVersionNumber [
-	self versionNumber: self versionNumber + 1
-]
-
 { #category : #initialization }
 LeSlideshowPageSlideElement >> initialize [
 	super initialize.
 	self addChild: self snippetAsElement.
-	self flag: #NOTE.	"Potential infinite loop below, how to prevent?"
 	self snippet weak
 		when: LeUIPageChildEvaluationAnnouncement
 		do: [ :anEvent | 
 			anEvent evaluatedBlockElement = self
 				ifFalse: [ (self query // LeElementSnippetElement) result first generateDisplayElement ] ].
 	self
-		when: LeSnippetEvaluated
+		when: LeElementSnippetEvaluated
 		do: [ :anEvent | 
-			| myselfAndSiblingElements |
 			anEvent consumed: true.
-
-			myselfAndSiblingElements := self snippet announcer subscriptions
-					subscriptions asArray
-					select: [ :each | 
-						(each subscriber isKindOf: LeSlideshowPageSlideElement)
-							and: [ (each subscriber
-									allParentsDetect: [ :anElement | anElement isKindOf: LeSlideshowPageElement ]
-									ifFound: #yourself
-									ifNone: [ nil ])
-									= (self
-											allParentsDetect: [ :anElement | anElement isKindOf: LeSlideshowPageElement ]
-											ifFound: #yourself
-											ifNone: [ nil ]) ] ]
-					thenCollect: #subscriber.
-			self versionNumber = (myselfAndSiblingElements max: #versionNumber)
-				ifTrue: [ self bumpVersionNumber.
-					self snippet notifier tree
-						announce: (LeUIPageChildEvaluationAnnouncement new
-								evaluatedBlock: anEvent snippet;
-								evaluatedBlockElement: anEvent element;
-								topParentElement: self;
-								evaluationResult: anEvent evaluationResult) ]
-				ifFalse: [ self bumpVersionNumber ] ]
+			self snippet notifier tree
+				announce: (LeUIPageChildEvaluationAnnouncement new
+						evaluatedBlock: anEvent snippet;
+						evaluatedBlockElement: anEvent element;
+						topParentElement: self) ]
 ]
 
 { #category : #accessing }
@@ -84,14 +58,4 @@ LeSlideshowPageSlideElement >> snippetAsElement [
 		elementHeight: 200;
 		codeHeight: 200;
 		asSlideshowPageElement
-]
-
-{ #category : #accessing }
-LeSlideshowPageSlideElement >> versionNumber [
-	^ versionNumber ifNil: [ versionNumber := 1 ]
-]
-
-{ #category : #accessing }
-LeSlideshowPageSlideElement >> versionNumber: anObject [
-	versionNumber := anObject
 ]
