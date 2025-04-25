@@ -215,13 +215,14 @@ LeSlideshowPageElement >> slidesGridTool [
 			vFitContent;
 			addChild: aGrid;
 			asScrollableElement.
+	aFrame
+		addChildren: {aScrollable.
+				self changeLayoutButton.
+				self playSlideshowButton}.
 	self onSnippetAdded: aGrid.
 	self onSnippetRemoved: aGrid.
 
 	^ aFrame
-		addChildren: {aScrollable.
-				self changeLayoutButton.
-				self playSlideshowButton}
 ]
 
 { #category : #ui }
@@ -234,9 +235,11 @@ LeSlideshowPageElement >> slidesList [
 			constraintsDo: [ :c | c linear weight: 1 ];
 			cellSpacing: 10;
 			addAptitude: BrShadowAptitude new
-				+ (BrGlamorousSlideExteriorAptitude new
-						backgroundPaint: Color white;
-						borderPaint: Color transparent).
+					+ (BrGlamorousSlideExteriorAptitude new
+							backgroundPaint: Color white;
+							borderPaint: Color transparent);
+			addChildren: (self elementSnippets
+					collect: [ :aSnippet | LeSlideshowPageSlideListElement forSnippet: aSnippet ]).
 	self onSnippetAdded: aVerticalPane.
 	self onSnippetRemoved: aVerticalPane.
 	self page announcer weak
@@ -249,10 +252,7 @@ LeSlideshowPageElement >> slidesList [
 					aVerticalPane removeChildren.
 					self elementSnippets
 						do: [ :each | aVerticalPane addChild: (slideElements at: each uid) first ] ] ].
-	^ aVerticalPane
-		addChildren: (self elementSnippets
-				collect: [ :aSnippet | LeSlideshowPageSlideListElement forSnippet: aSnippet ]);
-		asScrollableElement
+	^ aVerticalPane asScrollableElement
 ]
 
 { #category : #ui }
