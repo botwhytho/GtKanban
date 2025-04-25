@@ -6,7 +6,7 @@ Class {
 
 { #category : #printing }
 LeSlideshowPageSpotterStart >> gtDisplayOn: aStream [
-	aStream nextPutAll: 'Add new snippet'
+	aStream nextPutAll: 'Add New Slide'
 ]
 
 { #category : #searching }

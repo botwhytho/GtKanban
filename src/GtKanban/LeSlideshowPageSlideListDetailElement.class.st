@@ -9,7 +9,6 @@ LeSlideshowPageSlideListDetailElement >> initialize [
 	super initialize.
 	self
 		matchParent;
-		constraintsDo: [ :c | c linear weight: 4 ];
 		when: BlElementExtentChangedEvent
 			do: [ :anEvent | 
 				| snippetElement |

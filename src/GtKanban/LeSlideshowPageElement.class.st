@@ -174,39 +174,6 @@ LeSlideshowPageElement >> playSlideshowButton [
 ]
 
 { #category : #ui }
-LeSlideshowPageElement >> slideGridElementForSnippet: aSnippet [
-	| aFrame reorderingHandler |
-	reorderingHandler := GtSlideReorderingHandler new page: self page.
-	aFrame := BrFrame new.
-	self weak
-		when: GtSlidesGridShowMoreDetailEvent
-			do: [ :anAnnouncement | 
-				aFrame
-					allowChildrenMouseEvents;
-					removeEventHandler: reorderingHandler ];
-		when: GtSlidesGridShowLessDetailEvent
-			do: [ :anAnnouncement | 
-				aFrame
-					preventChildrenMouseEvents;
-					addEventHandler: reorderingHandler ].
-	^ aFrame
-		vFitContent;
-		hMatchParent;
-		addAptitude: BrShadowAptitude new
-				+ (BrGlamorousSlideExteriorAptitude new
-						backgroundPaint: Color white;
-						borderPaint: Color transparent);
-		when: BlMouseLeaveEvent
-			do: [ :anEvent | 
-				anEvent consumed: true.
-				aFrame hasFocus ifTrue: [ aFrame loseFocus ] ];
-		addChild: (aSnippet
-				elementHeight: 200;
-				codeHeight: 200;
-				asSlideshowPageElement)
-]
-
-{ #category : #ui }
 LeSlideshowPageElement >> slidesDetailTool [
 	| pane slideDetailContainer |
 	pane := BrHorizontalPane new
@@ -260,7 +227,6 @@ LeSlideshowPageElement >> slidesGridTool [
 { #category : #ui }
 LeSlideshowPageElement >> slidesList [
 	| aVerticalPane |
-	self columnCount: self detailedColumnCount.
 	aVerticalPane := BrVerticalPane new
 			hMatchParent;
 			vFitContent;

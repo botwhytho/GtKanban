@@ -16,20 +16,16 @@ LeSlideshowPageSlideListElement >> initialize [
 						borderPaint: Color transparent);
 		when: BlClickEvent
 			do: [ :anEvent | 
-				| parentContainer |
+				| detailedSlideContainer |
 				anEvent consumed: true.
 				self allowChildrenMouseEvents.
-				parentContainer := anEvent currentTarget
+				detailedSlideContainer := anEvent currentTarget
 						allParentsDetect: [ :anElement | anElement id asSymbol = #slidesDetailTool ]
 						ifFound: [ :found | found children second ]
 						ifNone: [ nil ].
-
-				parentContainer children
-					ifEmpty: [ parentContainer
-							addChild: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet) ]
-					ifNotEmpty: [ parentContainer
-							replaceChild: parentContainer children first
-							with: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet) ] ];
+				detailedSlideContainer
+					replaceChild: detailedSlideContainer children first
+					with: (LeSlideshowPageSlideListDetailElement forSnippet: self snippet) ];
 		when: BlMouseLeaveEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
