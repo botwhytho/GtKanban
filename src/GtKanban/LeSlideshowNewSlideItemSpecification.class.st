@@ -90,8 +90,8 @@ LeSlideshowNewSlideItemSpecification >> initialize [
 { #category : #accessing }
 LeSlideshowNewSlideItemSpecification >> preview [
 	^ preview
-		ifNil: [ LeElementSnippet new asPreviewElement preventChildrenMouseEvents	"gtPreviewElement asScalableElement" ]
-		ifNotNil: [ preview asElement preventChildrenMouseEvents	"gtPreviewElement asScalableElement" ]
+		ifNil: [ LeElementSnippet new asPreviewElement preventChildrenMouseEvents ]
+		ifNotNil: [ preview asElement preventChildrenMouseEvents ]
 ]
 
 { #category : #accessing }

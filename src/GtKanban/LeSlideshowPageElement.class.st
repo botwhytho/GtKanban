@@ -174,28 +174,6 @@ LeSlideshowPageElement >> playSlideshowButton [
 ]
 
 { #category : #ui }
-LeSlideshowPageElement >> previousSnippetBeforeNewSnippet: snippetElementsInUI inPage: pageSnippets [
-	| snippetsInUIStream snippetsInUI pageSnippetsStream previousSnippet currentSnippet newSnippet |
-	snippetsInUI := snippetElementsInUI
-			collect: [ :each | each -> each children first snippetViewModel snippetModel ].
-	snippetsInUIStream := snippetsInUI readStream.
-	pageSnippetsStream := pageSnippets readStream.
-	previousSnippet := nil.
-	currentSnippet := nil.
-	newSnippet := nil.
-	[ previousSnippet := currentSnippet.
-	currentSnippet := snippetsInUIStream next.
-	previousSnippet ifNil: [ previousSnippet := currentSnippet ].
-	newSnippet := pageSnippetsStream next.
-	currentSnippet value = newSnippet and: [ snippetsInUIStream atEnd not ] ]
-		whileTrue.
-	self flag: #TODO.	"REALLY clean up this code. Probably use wrapper classes for the snippet elements to keep them clean."
-	^ currentSnippet = newSnippet
-		ifTrue: [ currentSnippet key parent ]
-		ifFalse: [ previousSnippet "currentSnippet" key parent ]
-]
-
-{ #category : #ui }
 LeSlideshowPageElement >> slideGridElementForSnippet: aSnippet [
 	| aFrame reorderingHandler |
 	reorderingHandler := GtSlideReorderingHandler new page: self page.
@@ -257,13 +235,7 @@ LeSlideshowPageElement >> slidesGrid [
 		columnCount: self columnCount;
 		cellSpacing: 10;
 		addChildren: (self elementSnippets
-				collect: [ :aSnippet | 
-					"aSnippet
-						codeHeight: 200;
-						elementHeight: 200.
-					self slideGridElementForSnippet: aSnippet"
-					LeSlideshowPageSlideGridElement forSnippet: aSnippet
-					 ])
+				collect: [ :aSnippet | LeSlideshowPageSlideGridElement forSnippet: aSnippet ])
 ]
 
 { #category : #ui }
