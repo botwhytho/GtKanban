@@ -17,11 +17,6 @@ LeSlideshowPageElement class >> page: aLePage [
 		initialize
 ]
 
-{ #category : #announcer }
-LeSlideshowPageElement >> announcer [
-	^ announcer ifNil: [ announcer := Announcer new ]
-]
-
 { #category : #ui }
 LeSlideshowPageElement >> changeLayoutButton [
 	^ BrButton new
@@ -205,7 +200,9 @@ LeSlideshowPageElement >> slidesGrid [
 { #category : #ui }
 LeSlideshowPageElement >> slidesGridTool [
 	| aFrame aGrid aScrollable |
-	aFrame := BrFrame new matchParent.
+	aFrame := BrFrame new
+			id: #slidesGridTool;
+			matchParent.
 	aGrid := self slidesGrid.
 	aScrollable := BrFrame new
 			hMatchParent;

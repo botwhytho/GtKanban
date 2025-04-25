@@ -29,7 +29,7 @@ LeSlideshowPageSlideGridElement >> initialize [
 				anEvent consumed: true.
 				parentTool
 					ifNil: [ parentTool := self parentTool.
-						parentTool weak
+						parentTool
 							when: GtSlidesGridShowMoreDetailEvent
 								do: [ :anAnnouncement | 
 									self
