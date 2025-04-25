@@ -28,12 +28,8 @@ LeSlideshowPageSlideElement >> initialize [
 	self snippet weak
 		when: LeUIPageChildEvaluationAnnouncement
 		do: [ :anEvent | 
-		(self query // LeElementSnippetElement) result first generateDisplayElement.
-			"{anEvent.
-				self} logToNamed: 'Slides'"	"(anEvent evaluatedBlock = self snippet
-				and: [ (anEvent evaluatedBlockElement = self) not ])
-				ifTrue: [ self
-						enqueueTask: [ self parent replaceChild: self with: self snippetAsElement ] asBlTask ]" ].
+			anEvent evaluatedBlockElement = self
+				ifFalse: [ (self query // LeElementSnippetElement) result first generateDisplayElement ] ].
 	self
 		when: LeSnippetEvaluated
 		do: [ :anEvent | 
@@ -53,7 +49,7 @@ LeSlideshowPageSlideElement >> initialize [
 											ifFound: #yourself
 											ifNone: [ nil ]) ] ]
 					thenCollect: #subscriber.
-			(self versionNumber = myselfAndSiblingElements max: #versionNumber)
+			self versionNumber = (myselfAndSiblingElements max: #versionNumber)
 				ifTrue: [ self bumpVersionNumber.
 					self snippet notifier tree
 						announce: (LeUIPageChildEvaluationAnnouncement new
