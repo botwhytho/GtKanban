@@ -73,6 +73,7 @@ LeSlideshowPageElement >> elementSnippets [
 { #category : #initialization }
 LeSlideshowPageElement >> initialize [
 	super initialize.
+	self phlow beViewContent.
 	self
 		id: #slideshowPageTool;
 		matchParent;

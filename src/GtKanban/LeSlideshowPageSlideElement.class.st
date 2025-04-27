@@ -36,10 +36,7 @@ LeSlideshowPageSlideElement >> initialize [
 
 { #category : #accessing }
 LeSlideshowPageSlideElement >> parentTool [
-	^ self
-		allParentsDetect: [ :each | each isKindOf: LeSlideshowPageElement ]
-		ifFound: #yourself
-		ifNone: [ nil ]
+	^ self phlow firstParentWithViewContent
 ]
 
 { #category : #accessing }
