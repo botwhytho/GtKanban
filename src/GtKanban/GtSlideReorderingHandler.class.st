@@ -15,9 +15,17 @@ GtSlideReorderingHandler >> initialize [
 		newSlideOrder := (aBlDragEndEvent currentTarget parent query
 				// LeSlideshowPageSlideGridElement) result collect: #snippet.
 		newSlideOrder = self page type elementSnippets
-			ifFalse: [ self flag: #NOTE.	"The below doesn't keep track of other non-element snippets that are NOT children of those snippets. Snippets will be added at the end of the page with the code below. Children snippets, basically slide 'notes' work, but one shouldn't be using this page as an arbitrary Lepiter page and expect retention of snippet order at all times"
-				newSlideOrder do: [ :aSnippet | self page children removeSnippet: aSnippet ].
-				newSlideOrder do: [ :aSnippet | self page basicAddSnippet: aSnippet ].
+			ifFalse: [ | copyOfSnippets currentElementSnippetIndex |
+				currentElementSnippetIndex := 1.
+				copyOfSnippets := self page children asArray.
+				copyOfSnippets
+					do: [ :aSnippet | self page children removeSnippet: aSnippet ].
+				copyOfSnippets
+					do: [ :aSnippet | 
+						(aSnippet isKindOf: LeElementSnippet)
+							ifTrue: [ self page basicAddSnippet: (newSlideOrder at: currentElementSnippetIndex).
+								currentElementSnippetIndex := currentElementSnippetIndex + 1 ]
+							ifFalse: [ self page basicAddSnippet: aSnippet ] ].
 				self page announceTreeChanged: self page ] ]
 ]
 
