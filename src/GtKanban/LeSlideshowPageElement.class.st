@@ -5,7 +5,8 @@ Class {
 		'columnCount',
 		'page',
 		'slidesGridTool',
-		'slidesDetailTool'
+		'slidesDetailTool',
+		'toolDetailAptitude'
 	],
 	#category : #'GtKanban-UI'
 }
@@ -71,23 +72,52 @@ LeSlideshowPageElement >> elementSnippets [
 ]
 
 { #category : #initialization }
+LeSlideshowPageElement >> howToTool [
+	^ BlBasicExamples new circle asScalableElement
+		in: [ :anElement | 
+			anElement phlow beViewContent.
+			anElement
+				when: BlDoubleClickEvent
+				do: [ :anEvent | 
+					anEvent consumed: true.
+					self initializaTools ].
+			anElement ]
+]
+
+{ #category : #initialization }
+LeSlideshowPageElement >> initializaTools [
+	toolDetailAptitude
+		ifNotNil: [ self removeAptitude: toolDetailAptitude.
+			toolDetailAptitude := nil ].
+	self removeChildren;
+		addChildren: {slidesDetailTool := self slidesDetailTool.
+				slidesGridTool := self slidesGridTool};
+		addAptitude: (toolDetailAptitude := GtPhlowToolDetailAptitude new
+					normal: [ :aStyle | 
+						aStyle
+							do: [ slidesDetailTool visibility: BlVisibility gone.
+								slidesGridTool visibility: BlVisibility visible ] ];
+					detailed: [ :aStyle | 
+						aStyle
+							do: [ slidesDetailTool visibility: BlVisibility visible.
+								slidesGridTool visibility: BlVisibility gone ] ])
+]
+
+{ #category : #initialization }
 LeSlideshowPageElement >> initialize [
 	super initialize.
 	self phlow beViewContent.
 	self
 		id: #slideshowPageTool;
-		matchParent;
-		addChildren: {slidesDetailTool := self slidesDetailTool.
-				slidesGridTool := self slidesGridTool};
-		addAptitude: (GtPhlowToolDetailAptitude new
-				normal: [ :aStyle | 
-					aStyle
-						do: [ slidesDetailTool visibility: BlVisibility gone.
-							slidesGridTool visibility: BlVisibility visible ] ];
-				detailed: [ :aStyle | 
-					aStyle
-						do: [ slidesDetailTool visibility: BlVisibility visible.
-							slidesGridTool visibility: BlVisibility gone ] ])
+		matchParent.
+	self initializaTools.
+	self page announcer weak
+		when: LeContentTreeRemoved
+		do: [ :anAnnouncement | 
+			self page type elementSnippets size = 0
+				ifTrue: [ self
+						removeChildren;
+						addChild: self howToTool asElement ] ]
 ]
 
 { #category : #ui }
