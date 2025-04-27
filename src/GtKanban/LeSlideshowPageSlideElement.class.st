@@ -27,7 +27,7 @@ LeSlideshowPageSlideElement >> initialize [
 		when: LeElementSnippetEvaluated
 		do: [ :anEvent | 
 			anEvent consumed: true.
-			self snippet notifier tree
+			self snippet notifier local
 				announce: (LeUIPageChildEvaluationAnnouncement new
 						evaluatedBlock: anEvent snippet;
 						evaluatedBlockElement: anEvent element;
