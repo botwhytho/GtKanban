@@ -86,6 +86,17 @@ LeSlideshowPageType >> elementSnippets [
 	^ result
 ]
 
+{ #category : #examples }
+LeSlideshowPageType >> emptyPage [
+	<gtExample>
+	| aPage |
+	aPage := LePage new.
+	^ aPage
+		type: (LeSlideshowPageType new
+				title: 'An Empty Slideshow';
+				page: aPage)
+]
+
 { #category : #accessing }
 LeSlideshowPageType >> pageTypeRepo [
 	^ pageTypeRepo ifNil: [ pageTypeRepo := 'https://github.com/feenkcom/lepiter' ]

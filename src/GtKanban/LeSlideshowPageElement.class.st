@@ -72,8 +72,13 @@ LeSlideshowPageElement >> elementSnippets [
 ]
 
 { #category : #initialization }
+LeSlideshowPageElement >> howToText [
+	^ 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+]
+
+{ #category : #initialization }
 LeSlideshowPageElement >> howToTool [
-	^ BlBasicExamples new circle asScalableElement
+	"^ BlBasicExamples new circle asScalableElement
 		in: [ :anElement | 
 			anElement phlow beViewContent.
 			anElement
@@ -81,7 +86,37 @@ LeSlideshowPageElement >> howToTool [
 				do: [ :anEvent | 
 					anEvent consumed: true.
 					self initializaTools ].
-			anElement ]
+			anElement ]"
+
+	| editor samplePage tool |
+	samplePage := LeSlideshowPageType samplePage.
+	tool := samplePage type tool.
+	tool
+		removeAptitude: (tool aptitude children
+				detect: [ :each | each isKindOf: GtPhlowToolDetailAptitude ]).
+	tool children
+		do: [ :each | 
+			each
+				margin: (BlInsets
+						top: 100
+						bottom: 100
+						left: 25
+						right: 25);
+				addAptitude: BrShadowAptitude new
+						+ (BrGlamorousButtonExteriorAptitude new
+								backgroundPaint: Color white;
+								borderPaint: Color transparent) ].
+	editor := (LeCoderTextElement coderElementFor: self howToText)
+			constraintsDo: [ :c | 
+				"c vertical fitContent."
+				c horizontal matchParent ];
+			margin: (BlInsets left: 10).
+	^ BrVerticalPane new
+		vFitContent;
+		hMatchParent;
+		alignCenter;
+		addChildren: {editor.
+				tool}
 ]
 
 { #category : #initialization }
@@ -89,18 +124,23 @@ LeSlideshowPageElement >> initializaTools [
 	toolDetailAptitude
 		ifNotNil: [ self removeAptitude: toolDetailAptitude.
 			toolDetailAptitude := nil ].
-	self removeChildren;
-		addChildren: {slidesDetailTool := self slidesDetailTool.
-				slidesGridTool := self slidesGridTool};
-		addAptitude: (toolDetailAptitude := GtPhlowToolDetailAptitude new
-					normal: [ :aStyle | 
-						aStyle
-							do: [ slidesDetailTool visibility: BlVisibility gone.
-								slidesGridTool visibility: BlVisibility visible ] ];
-					detailed: [ :aStyle | 
-						aStyle
-							do: [ slidesDetailTool visibility: BlVisibility visible.
-								slidesGridTool visibility: BlVisibility gone ] ])
+	self page type elementSnippets size = 0
+		ifTrue: [ self
+				removeChildren;
+				addChild: self howToTool asElement ]
+		ifFalse: [ self
+				removeChildren;
+				addChildren: {slidesDetailTool := self slidesDetailTool.
+						slidesGridTool := self slidesGridTool};
+				addAptitude: (toolDetailAptitude := GtPhlowToolDetailAptitude new
+							normal: [ :aStyle | 
+								aStyle
+									do: [ slidesDetailTool visibility: BlVisibility gone.
+										slidesGridTool visibility: BlVisibility visible ] ];
+							detailed: [ :aStyle | 
+								aStyle
+									do: [ slidesDetailTool visibility: BlVisibility visible.
+										slidesGridTool visibility: BlVisibility gone ] ]) ]
 ]
 
 { #category : #initialization }
@@ -115,9 +155,7 @@ LeSlideshowPageElement >> initialize [
 		when: LeContentTreeRemoved
 		do: [ :anAnnouncement | 
 			self page type elementSnippets size = 0
-				ifTrue: [ self
-						removeChildren;
-						addChild: self howToTool asElement ] ]
+				ifTrue: [ self initializaTools ] ]
 ]
 
 { #category : #ui }
