@@ -225,7 +225,7 @@ LeSlideshowPageElement >> newPlusElement [
 ]
 
 { #category : #ui }
-LeSlideshowPageElement >> onSnippetAdded: aGrid [
+LeSlideshowPageElement >> onSnippetAdded: aGrid createElementOfClass: aClass [
 	self page announcer weak
 		when: LeContentTreeAdded
 		do: [ :anAnnouncement | 
@@ -234,7 +234,7 @@ LeSlideshowPageElement >> onSnippetAdded: aGrid [
 					pageSnippets := self page type elementSnippets.
 					indexOfNewSnippet := pageSnippets indexOf: anAnnouncement content.
 					aGrid
-						addChild: (aGrid children first class forSnippet: anAnnouncement content)
+						addChild: (aClass forSnippet: anAnnouncement content)
 						at: indexOfNewSnippet ] ]
 ]
 
@@ -350,7 +350,7 @@ LeSlideshowPageElement >> slidesGridTool [
 		addChildren: {aScrollable.
 				self changeLayoutButton.
 				self playSlideshowButton}.
-	self onSnippetAdded: aGrid.
+	self onSnippetAdded: aGrid createElementOfClass: LeSlideshowPageSlideGridElement.
 	self onSnippetRemoved: aGrid.
 
 	^ aFrame
@@ -372,7 +372,7 @@ LeSlideshowPageElement >> slidesList [
 							borderPaint: Color transparent);
 			addChildren: (self elementSnippets
 					collect: [ :aSnippet | LeSlideshowPageSlideListElement forSnippet: aSnippet ]).
-	self onSnippetAdded: aVerticalPane.
+	self onSnippetAdded: aVerticalPane createElementOfClass: LeSlideshowPageSlideListElement.
 	self onSnippetRemoved: aVerticalPane.
 	self page announcer weak
 		when: LeContentTreeChanged
