@@ -112,15 +112,15 @@ LeSlideshowNewSlideItemSpecification >> printOn: aStream [
 LeSlideshowNewSlideItemSpecification >> rewriteMethod: aMethod [
 	^ aMethod
 		ifNil: [ '' ]
-		ifNotNil: [ | anAst slideText |
+		ifNotNil: [ | anAst rewriter slideText |
 			anAst := aMethod ast veryDeepCopy.
 			anAst body
 				addNodeFirst: (RBParser
-						parseExpression: '| aSlide| aSlide := GtProtoLiveSlide new.
+						parseExpression: 'aSlide := GtProtoLiveSlide new.
 	aDemo := DemoSlideshow new.').
 			slideText := anAst
 					pragmaNamed: #text:
-					ifPresent: [ :aPragma | aPragma arguments first value ]
+					ifPresent: [ :aPragma | aPragma arguments first value copyReplaceAll: String cr with: ' ' ]
 					ifAbsent: [ nil ].
 			slideText
 				ifNotNil: [ anAst body
@@ -129,14 +129,18 @@ LeSlideshowNewSlideItemSpecification >> rewriteMethod: aMethod [
 										, ' | ' , slideText , '"') ].
 			anAst removePragmaNamed: #text:.
 			anAst removePragmaNamed: #gtSlide.
-			anAst allChildren
-				select: [ :aNode | (aNode isKindOf: RBVariableNode) and: [ aNode isSelfVariable ] ]
-				thenDo: [ :aNode | anAst replaceNode: aNode withNode: (RBParser parseExpression: 'aDemo') ].
-			(((anAst newSource lines allButFirst
-				reject: [ :each | (each includesSubstring: 'setPriority;') or: [ each includesSubstring: '	.	"' ] ])
-				joinUsing: String cr) copyReplaceAll: 'self' with: 'aDemo')
-				copyReplaceAll: '^'
-				with: '' ]
+			rewriter := RBParseTreeRewriter new.
+			rewriter
+				replace: '| `@temp |
+`@.Statements'
+				with: '`@.Statements'.
+			rewriter executeTree: anAst.
+			(((((anAst newSource lines allButFirst
+				reject: [ :each | each includesSubstring: '	.	"' ]) joinUsing: String cr)
+				copyReplaceAll: 'self '
+				with: 'aDemo ') copyReplaceAll: '^' with: '')
+				copyReplaceAll: 'setPriority;'
+				with: '') copyReplaceAll: 'setPriority' with: '' ]
 ]
 
 { #category : #'as yet unclassified' }
