@@ -21,8 +21,9 @@ LeSlideshowPageElement class >> page: aLePage [
 { #category : #initialization }
 LeSlideshowPageElement >> addExplainerToButtons: anElement [
 	| buttonsToExplain |
-	buttonsToExplain := {#slideList
-				-> (anElement query // #'slidesChangeLayoutButton') anyOne }.
+	buttonsToExplain := {#slidesChangeLayoutButton
+				-> (anElement query // #slidesChangeLayoutButton) anyOne.
+			#playSlidesButton -> (anElement query // #playSlidesButton) anyOne}.
 	buttonsToExplain
 		do: [ :each | 
 			each value
@@ -109,17 +110,31 @@ LeSlideshowPageElement >> howToEditor [
 			c vertical fitContent.
 			c horizontal matchParent ];
 		margin: (BlInsets
-				top: 50
+				top: 10
 				left: 50
 				bottom: 0
-				right: 50)
+				right: 10)
 ]
 
 { #category : #initialization }
 LeSlideshowPageElement >> howToText [
-	^ ('Lorem ipsum' asRopedText glamorousExplanationFor: #slideList)
-		, 'dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-				asRopedText
+	^ 'Add a slide above or continue reading below for instructions on how to use this tool.
+	
+The two views below show the two views this tool has. On the left is the view you will see when the tool is in expanded mode. On the right is the view you wil see when the tool is in ''minimized mode'' (when there are two miller columns in the current pager).
+	
+You will not see both tools at once, only shown here for explanatory purposes.
+	
+The view on the left has a scrollable list of slides and a detailed view of a single slide where you can modify the slide code. Try it out! You can use the + and x buttons on each slide to add (either empty or from templates) or delete slides respectively.
+	
+The view on the right is scrollable as well. It has two buttons:
+	- The '
+		asRopedText
+		, ('change layout' asRopedText glamorousExplanationFor: #slidesChangeLayoutButton)
+		, ' button toggles the amount of columns shown as well as the slide code. When in ''summmary mode'', when you can''t see the slide code, you can drag and drop slides around to modify their order. Try it out!
+	- The '
+		asRopedText
+		, ('play slideshow' asRopedText glamorousExplanationFor: #playSlidesButton)
+		, ' button generates a slideshow from the current slides in a new window.' asRopedText
 ]
 
 { #category : #initialization }
@@ -206,7 +221,7 @@ LeSlideshowPageElement >> newPlusElement [
 				thickness: 1;
 				radius: 4;
 				asElement);
-		margin: (BlInsets top: 10 bottom: 20)
+		margin: (BlInsets top: 10 bottom: 10)
 ]
 
 { #category : #ui }
@@ -389,8 +404,8 @@ LeSlideshowPageElement >> toolForExplainer [
 		do: [ :each | 
 			each
 				margin: (BlInsets
-						top: 100
-						bottom: 100
+						top: 25
+						bottom: 25
 						left: 25
 						right: 25);
 				addAptitude: BrShadowAptitude new
