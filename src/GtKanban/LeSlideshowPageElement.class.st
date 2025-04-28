@@ -19,6 +19,25 @@ LeSlideshowPageElement class >> page: aLePage [
 ]
 
 { #category : #initialization }
+LeSlideshowPageElement >> addExplainerToButtons: anElement [
+	| buttonsToExplain |
+	buttonsToExplain := {#slideList
+				-> (anElement query // #'slidesChangeLayoutButton') anyOne }.
+	buttonsToExplain
+		do: [ :each | 
+			each value
+				preventChildrenMouseEvents;
+				addChild: (BrButton new
+						constraintsDo: [ :c | c ignoreByLayout ];
+						size: 25 @ 25;
+						elevation: (BlRelativeElevation elevation: 10);
+						geometry: BlCircle new;
+						aptitude: (GtExplainerTargetAptitude new explanationModel: each key);
+						relocate: 5 @ each value extent y / 2) ].
+	^ anElement
+]
+
+{ #category : #initialization }
 LeSlideshowPageElement >> addSlideLabel [
 	^ BrLabel new
 		aptitude: (BrGlamorousLabelAptitude new fontSize: 20);
@@ -113,6 +132,7 @@ LeSlideshowPageElement >> howToTool [
 					self howToEditor.
 					self toolForExplainer}.
 	verticalPane explainer isExplanationHolder: true.
+	self addExplainerToButtons: verticalPane.
 	^ verticalPane
 ]
 
