@@ -21,6 +21,7 @@ LeSlideshowPageElement class >> page: aLePage [
 { #category : #ui }
 LeSlideshowPageElement >> changeLayoutButton [
 	^ BrButton new
+		id: #slidesChangeLayoutButton;
 		zIndex: 1000;
 		aptitude: BrGlamorousButtonWithIconAptitude;
 		margin: (BlInsets all: 25);
@@ -78,16 +79,6 @@ LeSlideshowPageElement >> howToText [
 
 { #category : #initialization }
 LeSlideshowPageElement >> howToTool [
-	"^ BlBasicExamples new circle asScalableElement
-		in: [ :anElement | 
-			anElement phlow beViewContent.
-			anElement
-				when: BlDoubleClickEvent
-				do: [ :anEvent | 
-					anEvent consumed: true.
-					self initializaTools ].
-			anElement ]"
-
 	| editor samplePage tool |
 	samplePage := LeSlideshowPageType samplePage.
 	tool := samplePage type tool.
@@ -106,15 +97,16 @@ LeSlideshowPageElement >> howToTool [
 						+ (BrGlamorousButtonExteriorAptitude new
 								backgroundPaint: Color white;
 								borderPaint: Color transparent) ].
-	editor := (LeCoderTextElement coderElementFor: self howToText)
+	editor := (BrEditor new
+			aptitude: BrGlamorousRegularEditorAptitude new;
+			beReadOnlyWithSelection;
+			text: self howToText)
 			constraintsDo: [ :c | 
-				"c vertical fitContent."
+				c vertical fitContent.
 				c horizontal matchParent ];
-			margin: (BlInsets left: 10).
-	^ BrVerticalPane new
-		vFitContent;
-		hMatchParent;
-		alignCenter;
+			margin: (BlInsets top: 50 left: 50 bottom: 0 right: 50).
+	^ BrVerticalPane new matchParent
+		alignBottomCenter;
 		addChildren: {editor.
 				tool}
 ]
@@ -205,6 +197,7 @@ LeSlideshowPageElement >> placeholderElement [
 { #category : #ui }
 LeSlideshowPageElement >> playSlideshowButton [
 	^ BrButton new
+		id: #playSlidesButton;
 		zIndex: 1000;
 		aptitude: BrGlamorousButtonWithIconAptitude;
 		margin: (BlInsets all: 25);
@@ -241,6 +234,7 @@ LeSlideshowPageElement >> slidesDetailTool [
 			id: #slidesDetailTool;
 			matchParent.
 	slideDetailContainer := BrVerticalPane new
+			id: #slidesDetail;
 			padding: (BlInsets all: 10);
 			matchParent;
 			alignCenter;
@@ -292,6 +286,7 @@ LeSlideshowPageElement >> slidesGridTool [
 LeSlideshowPageElement >> slidesList [
 	| aVerticalPane |
 	aVerticalPane := BrVerticalPane new
+			id: #slidesList;
 			hMatchParent;
 			vFitContent;
 			padding: (BlInsets all: 10);
