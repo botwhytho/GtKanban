@@ -135,12 +135,14 @@ LeSlideshowNewSlideItemSpecification >> rewriteMethod: aMethod [
 `@.Statements'
 				with: '`@.Statements'.
 			rewriter executeTree: anAst.
-			(((((anAst newSource lines allButFirst
+			((((((anAst newSource lines allButFirst
 				reject: [ :each | each includesSubstring: '	.	"' ]) joinUsing: String cr)
 				copyReplaceAll: 'self '
-				with: 'aDemo ') copyReplaceAll: '^' with: '')
-				copyReplaceAll: 'setPriority;'
-				with: '') copyReplaceAll: 'setPriority' with: '' ]
+				with: 'aDemo ') copyReplaceAll: 'self' , String cr with: 'aDemo' , String cr)
+				copyReplaceAll: '^'
+				with: '') copyReplaceAll: 'setPriority;' with: '')
+				copyReplaceAll: 'setPriority'
+				with: '' ]
 ]
 
 { #category : #'as yet unclassified' }
