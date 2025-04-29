@@ -22,9 +22,6 @@ The best approach for creating a new custom page type is to copy {{gtClass:LeExa
 Class {
 	#name : #LeExampleCustomPageType,
 	#superclass : #LeNamedPageType,
-	#instVars : [
-		'theAnswer'
-	],
 	#category : #'GtKanban-Model'
 }
 
@@ -37,8 +34,6 @@ LeExampleCustomPageType class >> initialize [
 LeExampleCustomPageType class >> leJsonV4AttributeMapping [
 
 	^ super leJsonV4AttributeMapping
-		add: #theAnswer -> #theAnswer;
-		yourself
 ]
 
 { #category : #accesing }
@@ -59,8 +54,7 @@ LeExampleCustomPageType class >> samplePage [
 	page
 		type: (LeExampleCustomPageType new
 				title: 'Testing';
-				page: page;
-				theAnswer: 42).
+				page: page).
 	^ page
 ]
 
@@ -80,11 +74,6 @@ LeExampleCustomPageType >> defaultPhlowTool [
 					do: [ :anEvent | anEvent currentTarget phlow spawnObject: 42 ] ]
 ]
 
-{ #category : #accessing }
-LeExampleCustomPageType >> pageTypeRepo [
-	^ pageTypeRepo ifNil: [ pageTypeRepo := 'https://github.com/feenkcom/lepiter' ]
-]
-
 { #category : #printing }
 LeExampleCustomPageType >> printOn: aStream [
 
@@ -96,21 +85,5 @@ LeExampleCustomPageType >> printOn: aStream [
 { #category : #example }
 LeExampleCustomPageType >> samplePage [
 	<gtExample>
-	| aPage |
-	aPage := LePage new.
-	aPage
-		type: (LeExampleCustomPageType new
-				title: 'Testing';
-				page: aPage).
-	^ aPage
-]
-
-{ #category : #accessing }
-LeExampleCustomPageType >> theAnswer [
-	^ theAnswer
-]
-
-{ #category : #accessing }
-LeExampleCustomPageType >> theAnswer: anObject [
-	theAnswer := anObject
+	^ self class samplePage
 ]
