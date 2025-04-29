@@ -77,8 +77,7 @@ BlReorderingHandler >> disallowOutOfBounds [
 { #category : #'event handling' }
 BlReorderingHandler >> dragEndEvent: aBlDragEndEvent [
 	| draggable |
-	"aBlDragEndEvent consumed: true."
-	self flag: #TODO.	"Test uncommenting above"
+	aBlDragEndEvent consumed: true.
 	draggable := aBlDragEndEvent currentTarget.
 	overlay removeChild: draggable.
 	parent replaceChild: placeholder with: draggable.
