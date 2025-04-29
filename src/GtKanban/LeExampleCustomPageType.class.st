@@ -58,7 +58,7 @@ LeExampleCustomPageType class >> samplePage [
 	^ page
 ]
 
-{ #category : #'ui\t' }
+{ #category : #ui }
 LeExampleCustomPageType >> asPreviewElement [
 	^ self defaultPhlowTool asElement
 ]
