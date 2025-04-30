@@ -56,8 +56,8 @@ LeSlideshowPageElement >> changeLayoutButton [
 		constraintsDo: [ :c | 
 			c frame horizontal alignLeft.
 			c frame vertical alignTop ];
-		label: 'Change Detail Level of Slide Grid';
-		icon: BrGlamorousVectorIcons hamburger;
+		label: 'Zoom out to change slide order';
+		icon: self dynamicGridButtonIcon;
 		action: [ :aBrButton :aBrButtonModel :anEvent | 
 			| grid |
 			anEvent consumed: true.
@@ -65,11 +65,15 @@ LeSlideshowPageElement >> changeLayoutButton [
 			self columnCount = self summaryColumnCount
 				ifTrue: [ grid columnCount: self detailedColumnCount.
 					self columnCount: self detailedColumnCount.
+					aBrButton icon: self dynamicGridButtonIcon;
+					label: 'Zoom out to change slide order'.
 					(grid query // LeElementSnippetElement) result
 						do: [ :aSnippetElement | aSnippetElement showCoder ].
 					self dispatchEvent: GtSlidesGridShowMoreDetailEvent new ]
 				ifFalse: [ grid columnCount: self summaryColumnCount.
 					self columnCount: self summaryColumnCount.
+					aBrButton icon: self dynamicGridButtonIcon;
+					label: 'Zoom in to work on slide code'.
 					(grid query // LeElementSnippetElement) result
 						do: [ :aSnippetElement | aSnippetElement hideCoder ].
 					self dispatchEvent: GtSlidesGridShowLessDetailEvent new ] ]
@@ -88,6 +92,26 @@ LeSlideshowPageElement >> columnCount: anInteger [
 { #category : #ui }
 LeSlideshowPageElement >> detailedColumnCount [
 	^ 2
+]
+
+{ #category : #ui }
+LeSlideshowPageElement >> dynamicGridButtonIcon [
+	| columns pane |
+	columns := {self detailedColumnCount.
+			self summaryColumnCount} detect: [ :each | (each = self columnCount) not ].
+	pane := BrHorizontalPane new
+			matchParent;
+			addChild: (BrHorizontalGrid new
+					fitContent;
+					size: 20 @ 20;
+					cellSpacing: 1;
+					columnCount: columns;
+					addChildren: ((1 to: (columns = 4 ifTrue: [ 12 ] ifFalse: [ 4 ]))
+							collect: [ :_ | 
+								BlElement new
+									size: (columns = 4 ifTrue: [ 4 @ 4 ] ifFalse: [ 8 @ 8 ]);
+									background: Color black ])).
+	^ columns = 4 ifTrue: [ pane alignBottomCenter ] ifFalse: [ pane alignCenter ]
 ]
 
 { #category : #accessing }
